@@ -1,0 +1,634 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Multi-Tenancy ───────────────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  plan      Plan     @default(STARTER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members          Membership[]
+  facilities       Facility[]
+  assets           Asset[]
+  assetCategories  AssetCategory[]
+  workOrders       MaintenanceWorkOrder[]
+  schedules        MaintenanceSchedule[]
+  predictiveAlerts PredictiveAlert[]
+  parts            Part[]
+  technicians      Technician[]
+  downtimeEvents   DowntimeEvent[]
+  apiKeys          ApiKey[]
+  auditLogs        AuditLog[]
+  notifications    Notification[]
+  connectors       Connector[]
+  syncLogs         SyncLog[]
+}
+
+enum Plan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+// ─── Auth & Users ────────────────────────────────────────────────
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String    @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  image          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  memberships    Membership[]
+  accounts       Account[]
+  sessions       Session[]
+  assignedOrders MaintenanceWorkOrder[]
+  auditLogs      AuditLog[]          @relation("AuditUser")
+  notifications  Notification[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Membership {
+  id             String   @id @default(cuid())
+  role           Role     @default(OPERATOR)
+  organizationId String
+  userId         String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MANAGER
+  OPERATOR
+}
+
+model ApiKey {
+  id             String    @id @default(cuid())
+  name           String
+  keyHash        String    @unique
+  lastUsedAt     DateTime?
+  organizationId String
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+// ─── Facilities & Locations ──────────────────────────────────────
+
+model Facility {
+  id             String   @id @default(cuid())
+  name           String
+  address        String?
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assets       Asset[]
+}
+
+// ─── Asset Categories ────────────────────────────────────────────
+
+model AssetCategory {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  parentId       String?
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  parent       AssetCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children     AssetCategory[] @relation("CategoryHierarchy")
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assets       Asset[]
+
+  @@unique([organizationId, name])
+}
+
+// ─── Assets (Equipment / Machines) ───────────────────────────────
+
+model Asset {
+  id              String      @id @default(cuid())
+  assetTag        String
+  name            String
+  externalId      String?                              // ID from synced ERP system
+  description     String?
+  status          AssetStatus @default(OPERATIONAL)
+  criticality     Criticality @default(MEDIUM)
+  manufacturer    String?
+  model           String?
+  serialNumber    String?
+  installDate     DateTime?
+  warrantyExpiry  DateTime?
+  location        String?
+  facilityId      String?
+  categoryId      String?
+  organizationId  String
+  imageUrl        String?
+  specifications  String?
+  purchaseCost    Decimal?    @db.Decimal(12, 2)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  facility         Facility?              @relation(fields: [facilityId], references: [id])
+  category         AssetCategory?         @relation(fields: [categoryId], references: [id])
+  organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sensorReadings   SensorReading[]
+  workOrders       MaintenanceWorkOrder[]
+  schedules        MaintenanceSchedule[]
+  predictiveAlerts PredictiveAlert[]
+  downtimeEvents   DowntimeEvent[]
+
+  @@unique([organizationId, assetTag])
+  @@index([organizationId, status])
+  @@index([categoryId])
+  @@index([facilityId])
+}
+
+enum AssetStatus {
+  OPERATIONAL
+  DEGRADED
+  DOWN
+  MAINTENANCE
+  DECOMMISSIONED
+}
+
+enum Criticality {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ─── Sensor Readings (Simulated IoT) ────────────────────────────
+
+model SensorReading {
+  id        String     @id @default(cuid())
+  assetId   String
+  type      SensorType
+  value     Float
+  unit      String
+  timestamp DateTime   @default(now())
+  anomaly   Boolean    @default(false)
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId, type, timestamp])
+  @@index([assetId, timestamp])
+  @@index([anomaly, timestamp])
+}
+
+enum SensorType {
+  TEMPERATURE
+  VIBRATION
+  PRESSURE
+  HUMIDITY
+  CURRENT
+  RPM
+  OIL_LEVEL
+  NOISE
+}
+
+// ─── Maintenance Work Orders ─────────────────────────────────────
+
+model MaintenanceWorkOrder {
+  id             String          @id @default(cuid())
+  orderNumber    String
+  externalId     String?                              // ID from synced ERP system
+  type           WorkOrderType
+  status         WorkOrderStatus @default(OPEN)
+  priority       Priority        @default(MEDIUM)
+  title          String
+  description    String?
+  assetId        String
+  assigneeId     String?
+  technicianId   String?
+  scheduleId     String?
+  alertId        String?
+  organizationId String
+  estimatedHours Float?
+  actualHours    Float?
+  laborCost      Decimal?        @db.Decimal(12, 2)
+  partsCost      Decimal?        @db.Decimal(12, 2)
+  notes          String?
+  dueDate        DateTime?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  asset        Asset                @relation(fields: [assetId], references: [id])
+  assignee     User?                @relation(fields: [assigneeId], references: [id])
+  technician   Technician?          @relation(fields: [technicianId], references: [id])
+  schedule     MaintenanceSchedule? @relation(fields: [scheduleId], references: [id])
+  alert        PredictiveAlert?     @relation(fields: [alertId], references: [id])
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  partUsages   PartUsage[]
+
+  @@unique([organizationId, orderNumber])
+  @@index([organizationId, status])
+  @@index([assetId])
+  @@index([assigneeId])
+  @@index([technicianId])
+  @@index([status, priority])
+}
+
+enum WorkOrderType {
+  CORRECTIVE
+  PREVENTIVE
+  PREDICTIVE
+  INSPECTION
+  EMERGENCY
+}
+
+enum WorkOrderStatus {
+  OPEN
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ─── Preventive Maintenance Schedules ────────────────────────────
+
+model MaintenanceSchedule {
+  id             String    @id @default(cuid())
+  name           String
+  description    String?
+  assetId        String
+  frequency      Frequency
+  intervalDays   Int
+  lastPerformed  DateTime?
+  nextDue        DateTime
+  enabled        Boolean   @default(true)
+  checklist      String?
+  estimatedHours Float?
+  organizationId String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  asset        Asset                  @relation(fields: [assetId], references: [id])
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workOrders   MaintenanceWorkOrder[]
+
+  @@index([organizationId, nextDue])
+  @@index([assetId])
+  @@index([enabled, nextDue])
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+  CUSTOM
+}
+
+// ─── Predictive Alerts ───────────────────────────────────────────
+
+model PredictiveAlert {
+  id             String          @id @default(cuid())
+  assetId        String
+  sensorType     SensorType
+  severity       AlertSeverity   @default(WARNING)
+  title          String
+  message        String
+  currentValue   Float
+  threshold      Float
+  status         PredAlertStatus @default(ACTIVE)
+  resolvedAt     DateTime?
+  organizationId String
+  createdAt      DateTime        @default(now())
+
+  asset        Asset                  @relation(fields: [assetId], references: [id])
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workOrders   MaintenanceWorkOrder[]
+
+  @@index([organizationId, status])
+  @@index([assetId, status])
+  @@index([severity, status])
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum PredAlertStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+  FALSE_POSITIVE
+}
+
+// ─── Spare Parts Inventory ───────────────────────────────────────
+
+model Part {
+  id             String   @id @default(cuid())
+  partNumber     String
+  name           String
+  description    String?
+  category       String?
+  quantity       Int      @default(0)
+  minStock       Int      @default(0)
+  unitCost       Decimal? @db.Decimal(12, 2)
+  location       String?
+  supplier       String?
+  leadTimeDays   Int?
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  partUsages   PartUsage[]
+
+  @@unique([organizationId, partNumber])
+  @@index([organizationId, category])
+  @@index([quantity])
+}
+
+// ─── Part Usage ──────────────────────────────────────────────────
+
+model PartUsage {
+  id          String   @id @default(cuid())
+  workOrderId String
+  partId      String
+  quantity    Int
+  unitCost    Decimal? @db.Decimal(12, 2)
+  createdAt   DateTime @default(now())
+
+  workOrder MaintenanceWorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  part      Part                 @relation(fields: [partId], references: [id])
+
+  @@index([workOrderId])
+  @@index([partId])
+}
+
+// ─── Technicians ─────────────────────────────────────────────────
+
+model Technician {
+  id             String     @id @default(cuid())
+  name           String
+  email          String?
+  phone          String?
+  employeeId     String?
+  skills         String?
+  certifications String?
+  status         TechStatus @default(AVAILABLE)
+  hourlyRate     Decimal?   @db.Decimal(8, 2)
+  organizationId String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workOrders   MaintenanceWorkOrder[]
+
+  @@unique([organizationId, employeeId])
+  @@index([organizationId, status])
+}
+
+enum TechStatus {
+  AVAILABLE
+  ON_JOB
+  OFF_SHIFT
+  ON_LEAVE
+}
+
+// ─── Downtime Tracking ───────────────────────────────────────────
+
+model DowntimeEvent {
+  id             String         @id @default(cuid())
+  assetId        String
+  reason         DowntimeReason
+  category       String?
+  notes          String?
+  planned        Boolean        @default(false)
+  startedAt      DateTime
+  endedAt        DateTime?
+  durationMin    Int?
+  organizationId String
+  createdAt      DateTime       @default(now())
+
+  asset        Asset        @relation(fields: [assetId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([assetId, startedAt])
+  @@index([organizationId, startedAt])
+}
+
+enum DowntimeReason {
+  BREAKDOWN
+  PREVENTIVE_MAINTENANCE
+  SETUP_CHANGEOVER
+  MATERIAL_SHORTAGE
+  OPERATOR_UNAVAILABLE
+  QUALITY_ISSUE
+  EXTERNAL
+  OTHER
+}
+
+// ─── Audit Trail ─────────────────────────────────────────────────
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  action         String
+  entityType     String
+  entityId       String?
+  userId         String?
+  organizationId String
+  metadata       String?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  user         User?        @relation("AuditUser", fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([action])
+}
+
+// ─── Notifications ───────────────────────────────────────────────
+
+model Notification {
+  id             String           @id @default(cuid())
+  type           NotificationType
+  title          String
+  message        String
+  link           String?
+  read           Boolean          @default(false)
+  userId         String?
+  organizationId String
+  createdAt      DateTime         @default(now())
+
+  user         User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, userId, read])
+  @@index([organizationId, createdAt])
+}
+
+enum NotificationType {
+  ALERT
+  WORK_ORDER
+  SCHEDULE_DUE
+  PREDICTIVE
+  PART_LOW_STOCK
+  DOWNTIME
+  TEAM
+  SYSTEM
+  CONNECTOR
+}
+
+// ─── ERP Connectors ──────────────────────────────────────────────
+
+model Connector {
+  id             String          @id @default(cuid())
+  name           String
+  type           ConnectorType
+  status         ConnectorStatus @default(PENDING)
+  direction      SyncDirection   @default(IMPORT)
+  config         String?                              // encrypted JSON: host, port, database, credentials
+  fieldMapping   String?                              // JSON: mapping of external fields to MAINTAINR fields
+  syncEntities   String[]                             // e.g. ["ASSETS", "WORK_ORDERS"]
+  syncFrequency  String?                              // cron expression or "MANUAL"
+  lastSyncAt     DateTime?
+  lastSyncStatus String?                              // "success", "partial", "failed"
+  lastSyncCount  Int?                                 // records synced in last run
+  errorMessage   String?
+  organizationId String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  syncLogs     SyncLog[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, type])
+}
+
+enum ConnectorType {
+  SAP
+  ORACLE
+  DYNAMICS_365
+  ODBC
+  POSTGRESQL
+  MYSQL
+  MSSQL
+  REST_API
+  CSV_UPLOAD
+}
+
+enum ConnectorStatus {
+  PENDING
+  CONNECTED
+  SYNCING
+  ERROR
+  DISABLED
+}
+
+enum SyncDirection {
+  IMPORT
+  EXPORT
+  BIDIRECTIONAL
+}
+
+// ─── Sync Logs ───────────────────────────────────────────────────
+
+model SyncLog {
+  id             String        @id @default(cuid())
+  connectorId    String
+  direction      SyncDirection
+  entity         String                               // "ASSETS", "WORK_ORDERS"
+  status         SyncLogStatus
+  recordsRead    Int           @default(0)
+  recordsCreated Int           @default(0)
+  recordsUpdated Int           @default(0)
+  recordsSkipped Int           @default(0)
+  recordsFailed  Int           @default(0)
+  errorDetails   String?                              // JSON array of error details
+  duration       Int?                                 // milliseconds
+  organizationId String
+  startedAt      DateTime      @default(now())
+  completedAt    DateTime?
+
+  connector    Connector    @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([connectorId, startedAt])
+  @@index([organizationId, startedAt])
+}
+
+enum SyncLogStatus {
+  RUNNING
+  SUCCESS
+  PARTIAL
+  FAILED
+}
