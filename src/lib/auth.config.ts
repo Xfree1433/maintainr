@@ -29,6 +29,7 @@ export const authConfig: NextAuthConfig = {
       if (
         pathname.startsWith("/login") ||
         pathname.startsWith("/register") ||
+        pathname.startsWith("/demo") ||
         pathname.startsWith("/api/auth") ||
         pathname.startsWith("/api/external") ||
         pathname.startsWith("/_next") ||
