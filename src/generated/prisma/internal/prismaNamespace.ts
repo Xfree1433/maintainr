@@ -403,7 +403,9 @@ export const ModelName = {
   Technician: 'Technician',
   DowntimeEvent: 'DowntimeEvent',
   AuditLog: 'AuditLog',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  Connector: 'Connector',
+  SyncLog: 'SyncLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "organization" | "user" | "account" | "session" | "verificationToken" | "membership" | "apiKey" | "facility" | "assetCategory" | "asset" | "sensorReading" | "maintenanceWorkOrder" | "maintenanceSchedule" | "predictiveAlert" | "part" | "partUsage" | "technician" | "downtimeEvent" | "auditLog" | "notification"
+    modelProps: "organization" | "user" | "account" | "session" | "verificationToken" | "membership" | "apiKey" | "facility" | "assetCategory" | "asset" | "sensorReading" | "maintenanceWorkOrder" | "maintenanceSchedule" | "predictiveAlert" | "part" | "partUsage" | "technician" | "downtimeEvent" | "auditLog" | "notification" | "connector" | "syncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1903,6 +1905,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Connector: {
+      payload: Prisma.$ConnectorPayload<ExtArgs>
+      fields: Prisma.ConnectorFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConnectorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConnectorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>
+        }
+        findFirst: {
+          args: Prisma.ConnectorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConnectorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>
+        }
+        findMany: {
+          args: Prisma.ConnectorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>[]
+        }
+        create: {
+          args: Prisma.ConnectorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>
+        }
+        createMany: {
+          args: Prisma.ConnectorCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConnectorCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>[]
+        }
+        delete: {
+          args: Prisma.ConnectorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>
+        }
+        update: {
+          args: Prisma.ConnectorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConnectorDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConnectorUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConnectorUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConnectorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConnectorPayload>
+        }
+        aggregate: {
+          args: Prisma.ConnectorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConnector>
+        }
+        groupBy: {
+          args: Prisma.ConnectorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConnectorGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConnectorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConnectorCountAggregateOutputType> | number
+        }
+      }
+    }
+    SyncLog: {
+      payload: Prisma.$SyncLogPayload<ExtArgs>
+      fields: Prisma.SyncLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SyncLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SyncLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>
+        }
+        findFirst: {
+          args: Prisma.SyncLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SyncLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>
+        }
+        findMany: {
+          args: Prisma.SyncLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>[]
+        }
+        create: {
+          args: Prisma.SyncLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>
+        }
+        createMany: {
+          args: Prisma.SyncLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SyncLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>[]
+        }
+        delete: {
+          args: Prisma.SyncLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>
+        }
+        update: {
+          args: Prisma.SyncLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.SyncLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SyncLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SyncLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.SyncLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SyncLogPayload>
+        }
+        aggregate: {
+          args: Prisma.SyncLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSyncLog>
+        }
+        groupBy: {
+          args: Prisma.SyncLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SyncLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SyncLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SyncLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2057,6 +2207,7 @@ export const AssetScalarFieldEnum = {
   id: 'id',
   assetTag: 'assetTag',
   name: 'name',
+  externalId: 'externalId',
   description: 'description',
   status: 'status',
   criticality: 'criticality',
@@ -2095,6 +2246,7 @@ export type SensorReadingScalarFieldEnum = (typeof SensorReadingScalarFieldEnum)
 export const MaintenanceWorkOrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
+  externalId: 'externalId',
   type: 'type',
   status: 'status',
   priority: 'priority',
@@ -2254,6 +2406,49 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const ConnectorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  status: 'status',
+  direction: 'direction',
+  config: 'config',
+  fieldMapping: 'fieldMapping',
+  syncEntities: 'syncEntities',
+  syncFrequency: 'syncFrequency',
+  lastSyncAt: 'lastSyncAt',
+  lastSyncStatus: 'lastSyncStatus',
+  lastSyncCount: 'lastSyncCount',
+  errorMessage: 'errorMessage',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ConnectorScalarFieldEnum = (typeof ConnectorScalarFieldEnum)[keyof typeof ConnectorScalarFieldEnum]
+
+
+export const SyncLogScalarFieldEnum = {
+  id: 'id',
+  connectorId: 'connectorId',
+  direction: 'direction',
+  entity: 'entity',
+  status: 'status',
+  recordsRead: 'recordsRead',
+  recordsCreated: 'recordsCreated',
+  recordsUpdated: 'recordsUpdated',
+  recordsSkipped: 'recordsSkipped',
+  recordsFailed: 'recordsFailed',
+  errorDetails: 'errorDetails',
+  duration: 'duration',
+  organizationId: 'organizationId',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type SyncLogScalarFieldEnum = (typeof SyncLogScalarFieldEnum)[keyof typeof SyncLogScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2558,6 +2753,62 @@ export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListEnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType[]'>
     
 
+
+/**
+ * Reference to a field of type 'ConnectorType'
+ */
+export type EnumConnectorTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectorType'>
+    
+
+
+/**
+ * Reference to a field of type 'ConnectorType[]'
+ */
+export type ListEnumConnectorTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectorType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ConnectorStatus'
+ */
+export type EnumConnectorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectorStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ConnectorStatus[]'
+ */
+export type ListEnumConnectorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectorStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SyncDirection'
+ */
+export type EnumSyncDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncDirection'>
+    
+
+
+/**
+ * Reference to a field of type 'SyncDirection[]'
+ */
+export type ListEnumSyncDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncDirection[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SyncLogStatus'
+ */
+export type EnumSyncLogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncLogStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SyncLogStatus[]'
+ */
+export type ListEnumSyncLogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncLogStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2673,6 +2924,8 @@ export type GlobalOmitConfig = {
   downtimeEvent?: Prisma.DowntimeEventOmit
   auditLog?: Prisma.AuditLogOmit
   notification?: Prisma.NotificationOmit
+  connector?: Prisma.ConnectorOmit
+  syncLog?: Prisma.SyncLogOmit
 }
 
 /* Types for Logging */

@@ -160,7 +160,53 @@ export const NotificationType = {
   PART_LOW_STOCK: 'PART_LOW_STOCK',
   DOWNTIME: 'DOWNTIME',
   TEAM: 'TEAM',
-  SYSTEM: 'SYSTEM'
+  SYSTEM: 'SYSTEM',
+  CONNECTOR: 'CONNECTOR'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const ConnectorType = {
+  SAP: 'SAP',
+  ORACLE: 'ORACLE',
+  DYNAMICS_365: 'DYNAMICS_365',
+  ODBC: 'ODBC',
+  POSTGRESQL: 'POSTGRESQL',
+  MYSQL: 'MYSQL',
+  MSSQL: 'MSSQL',
+  REST_API: 'REST_API',
+  CSV_UPLOAD: 'CSV_UPLOAD'
+} as const
+
+export type ConnectorType = (typeof ConnectorType)[keyof typeof ConnectorType]
+
+
+export const ConnectorStatus = {
+  PENDING: 'PENDING',
+  CONNECTED: 'CONNECTED',
+  SYNCING: 'SYNCING',
+  ERROR: 'ERROR',
+  DISABLED: 'DISABLED'
+} as const
+
+export type ConnectorStatus = (typeof ConnectorStatus)[keyof typeof ConnectorStatus]
+
+
+export const SyncDirection = {
+  IMPORT: 'IMPORT',
+  EXPORT: 'EXPORT',
+  BIDIRECTIONAL: 'BIDIRECTIONAL'
+} as const
+
+export type SyncDirection = (typeof SyncDirection)[keyof typeof SyncDirection]
+
+
+export const SyncLogStatus = {
+  RUNNING: 'RUNNING',
+  SUCCESS: 'SUCCESS',
+  PARTIAL: 'PARTIAL',
+  FAILED: 'FAILED'
+} as const
+
+export type SyncLogStatus = (typeof SyncLogStatus)[keyof typeof SyncLogStatus]

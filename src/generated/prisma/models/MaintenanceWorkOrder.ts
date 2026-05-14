@@ -43,6 +43,7 @@ export type MaintenanceWorkOrderSumAggregateOutputType = {
 export type MaintenanceWorkOrderMinAggregateOutputType = {
   id: string | null
   orderNumber: string | null
+  externalId: string | null
   type: $Enums.WorkOrderType | null
   status: $Enums.WorkOrderStatus | null
   priority: $Enums.Priority | null
@@ -69,6 +70,7 @@ export type MaintenanceWorkOrderMinAggregateOutputType = {
 export type MaintenanceWorkOrderMaxAggregateOutputType = {
   id: string | null
   orderNumber: string | null
+  externalId: string | null
   type: $Enums.WorkOrderType | null
   status: $Enums.WorkOrderStatus | null
   priority: $Enums.Priority | null
@@ -95,6 +97,7 @@ export type MaintenanceWorkOrderMaxAggregateOutputType = {
 export type MaintenanceWorkOrderCountAggregateOutputType = {
   id: number
   orderNumber: number
+  externalId: number
   type: number
   status: number
   priority: number
@@ -137,6 +140,7 @@ export type MaintenanceWorkOrderSumAggregateInputType = {
 export type MaintenanceWorkOrderMinAggregateInputType = {
   id?: true
   orderNumber?: true
+  externalId?: true
   type?: true
   status?: true
   priority?: true
@@ -163,6 +167,7 @@ export type MaintenanceWorkOrderMinAggregateInputType = {
 export type MaintenanceWorkOrderMaxAggregateInputType = {
   id?: true
   orderNumber?: true
+  externalId?: true
   type?: true
   status?: true
   priority?: true
@@ -189,6 +194,7 @@ export type MaintenanceWorkOrderMaxAggregateInputType = {
 export type MaintenanceWorkOrderCountAggregateInputType = {
   id?: true
   orderNumber?: true
+  externalId?: true
   type?: true
   status?: true
   priority?: true
@@ -302,6 +308,7 @@ export type MaintenanceWorkOrderGroupByArgs<ExtArgs extends runtime.Types.Extens
 export type MaintenanceWorkOrderGroupByOutputType = {
   id: string
   orderNumber: string
+  externalId: string | null
   type: $Enums.WorkOrderType
   status: $Enums.WorkOrderStatus
   priority: $Enums.Priority
@@ -351,6 +358,7 @@ export type MaintenanceWorkOrderWhereInput = {
   NOT?: Prisma.MaintenanceWorkOrderWhereInput | Prisma.MaintenanceWorkOrderWhereInput[]
   id?: Prisma.StringFilter<"MaintenanceWorkOrder"> | string
   orderNumber?: Prisma.StringFilter<"MaintenanceWorkOrder"> | string
+  externalId?: Prisma.StringNullableFilter<"MaintenanceWorkOrder"> | string | null
   type?: Prisma.EnumWorkOrderTypeFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFilter<"MaintenanceWorkOrder"> | $Enums.Priority
@@ -384,6 +392,7 @@ export type MaintenanceWorkOrderWhereInput = {
 export type MaintenanceWorkOrderOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   orderNumber?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -421,6 +430,7 @@ export type MaintenanceWorkOrderWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MaintenanceWorkOrderWhereInput[]
   NOT?: Prisma.MaintenanceWorkOrderWhereInput | Prisma.MaintenanceWorkOrderWhereInput[]
   orderNumber?: Prisma.StringFilter<"MaintenanceWorkOrder"> | string
+  externalId?: Prisma.StringNullableFilter<"MaintenanceWorkOrder"> | string | null
   type?: Prisma.EnumWorkOrderTypeFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFilter<"MaintenanceWorkOrder"> | $Enums.Priority
@@ -454,6 +464,7 @@ export type MaintenanceWorkOrderWhereUniqueInput = Prisma.AtLeast<{
 export type MaintenanceWorkOrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   orderNumber?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -488,6 +499,7 @@ export type MaintenanceWorkOrderScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MaintenanceWorkOrderScalarWhereWithAggregatesInput | Prisma.MaintenanceWorkOrderScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"MaintenanceWorkOrder"> | string
   orderNumber?: Prisma.StringWithAggregatesFilter<"MaintenanceWorkOrder"> | string
+  externalId?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceWorkOrder"> | string | null
   type?: Prisma.EnumWorkOrderTypeWithAggregatesFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusWithAggregatesFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityWithAggregatesFilter<"MaintenanceWorkOrder"> | $Enums.Priority
@@ -514,6 +526,7 @@ export type MaintenanceWorkOrderScalarWhereWithAggregatesInput = {
 export type MaintenanceWorkOrderCreateInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -541,6 +554,7 @@ export type MaintenanceWorkOrderCreateInput = {
 export type MaintenanceWorkOrderUncheckedCreateInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -568,6 +582,7 @@ export type MaintenanceWorkOrderUncheckedCreateInput = {
 export type MaintenanceWorkOrderUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -595,6 +610,7 @@ export type MaintenanceWorkOrderUpdateInput = {
 export type MaintenanceWorkOrderUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -622,6 +638,7 @@ export type MaintenanceWorkOrderUncheckedUpdateInput = {
 export type MaintenanceWorkOrderCreateManyInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -648,6 +665,7 @@ export type MaintenanceWorkOrderCreateManyInput = {
 export type MaintenanceWorkOrderUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -668,6 +686,7 @@ export type MaintenanceWorkOrderUpdateManyMutationInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -709,6 +728,7 @@ export type MaintenanceWorkOrderOrganizationIdOrderNumberCompoundUniqueInput = {
 export type MaintenanceWorkOrderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   orderNumber?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -742,6 +762,7 @@ export type MaintenanceWorkOrderAvgOrderByAggregateInput = {
 export type MaintenanceWorkOrderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   orderNumber?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -768,6 +789,7 @@ export type MaintenanceWorkOrderMaxOrderByAggregateInput = {
 export type MaintenanceWorkOrderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   orderNumber?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -1092,6 +1114,7 @@ export type MaintenanceWorkOrderUncheckedUpdateManyWithoutTechnicianNestedInput 
 export type MaintenanceWorkOrderCreateWithoutOrganizationInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1118,6 +1141,7 @@ export type MaintenanceWorkOrderCreateWithoutOrganizationInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutOrganizationInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1173,6 +1197,7 @@ export type MaintenanceWorkOrderScalarWhereInput = {
   NOT?: Prisma.MaintenanceWorkOrderScalarWhereInput | Prisma.MaintenanceWorkOrderScalarWhereInput[]
   id?: Prisma.StringFilter<"MaintenanceWorkOrder"> | string
   orderNumber?: Prisma.StringFilter<"MaintenanceWorkOrder"> | string
+  externalId?: Prisma.StringNullableFilter<"MaintenanceWorkOrder"> | string | null
   type?: Prisma.EnumWorkOrderTypeFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFilter<"MaintenanceWorkOrder"> | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFilter<"MaintenanceWorkOrder"> | $Enums.Priority
@@ -1199,6 +1224,7 @@ export type MaintenanceWorkOrderScalarWhereInput = {
 export type MaintenanceWorkOrderCreateWithoutAssigneeInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1225,6 +1251,7 @@ export type MaintenanceWorkOrderCreateWithoutAssigneeInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutAssigneeInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1277,6 +1304,7 @@ export type MaintenanceWorkOrderUpdateManyWithWhereWithoutAssigneeInput = {
 export type MaintenanceWorkOrderCreateWithoutAssetInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1303,6 +1331,7 @@ export type MaintenanceWorkOrderCreateWithoutAssetInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutAssetInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1355,6 +1384,7 @@ export type MaintenanceWorkOrderUpdateManyWithWhereWithoutAssetInput = {
 export type MaintenanceWorkOrderCreateWithoutScheduleInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1381,6 +1411,7 @@ export type MaintenanceWorkOrderCreateWithoutScheduleInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutScheduleInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1433,6 +1464,7 @@ export type MaintenanceWorkOrderUpdateManyWithWhereWithoutScheduleInput = {
 export type MaintenanceWorkOrderCreateWithoutAlertInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1459,6 +1491,7 @@ export type MaintenanceWorkOrderCreateWithoutAlertInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutAlertInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1511,6 +1544,7 @@ export type MaintenanceWorkOrderUpdateManyWithWhereWithoutAlertInput = {
 export type MaintenanceWorkOrderCreateWithoutPartUsagesInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1537,6 +1571,7 @@ export type MaintenanceWorkOrderCreateWithoutPartUsagesInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutPartUsagesInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1579,6 +1614,7 @@ export type MaintenanceWorkOrderUpdateToOneWithWhereWithoutPartUsagesInput = {
 export type MaintenanceWorkOrderUpdateWithoutPartUsagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1605,6 +1641,7 @@ export type MaintenanceWorkOrderUpdateWithoutPartUsagesInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutPartUsagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1631,6 +1668,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutPartUsagesInput = {
 export type MaintenanceWorkOrderCreateWithoutTechnicianInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1657,6 +1695,7 @@ export type MaintenanceWorkOrderCreateWithoutTechnicianInput = {
 export type MaintenanceWorkOrderUncheckedCreateWithoutTechnicianInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1709,6 +1748,7 @@ export type MaintenanceWorkOrderUpdateManyWithWhereWithoutTechnicianInput = {
 export type MaintenanceWorkOrderCreateManyOrganizationInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1734,6 +1774,7 @@ export type MaintenanceWorkOrderCreateManyOrganizationInput = {
 export type MaintenanceWorkOrderUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1760,6 +1801,7 @@ export type MaintenanceWorkOrderUpdateWithoutOrganizationInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1786,6 +1828,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutOrganizationInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1811,6 +1854,7 @@ export type MaintenanceWorkOrderUncheckedUpdateManyWithoutOrganizationInput = {
 export type MaintenanceWorkOrderCreateManyAssigneeInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1836,6 +1880,7 @@ export type MaintenanceWorkOrderCreateManyAssigneeInput = {
 export type MaintenanceWorkOrderUpdateWithoutAssigneeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1862,6 +1907,7 @@ export type MaintenanceWorkOrderUpdateWithoutAssigneeInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutAssigneeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1888,6 +1934,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutAssigneeInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyWithoutAssigneeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1913,6 +1960,7 @@ export type MaintenanceWorkOrderUncheckedUpdateManyWithoutAssigneeInput = {
 export type MaintenanceWorkOrderCreateManyAssetInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -1938,6 +1986,7 @@ export type MaintenanceWorkOrderCreateManyAssetInput = {
 export type MaintenanceWorkOrderUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1964,6 +2013,7 @@ export type MaintenanceWorkOrderUpdateWithoutAssetInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -1990,6 +2040,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutAssetInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2015,6 +2066,7 @@ export type MaintenanceWorkOrderUncheckedUpdateManyWithoutAssetInput = {
 export type MaintenanceWorkOrderCreateManyScheduleInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -2040,6 +2092,7 @@ export type MaintenanceWorkOrderCreateManyScheduleInput = {
 export type MaintenanceWorkOrderUpdateWithoutScheduleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2066,6 +2119,7 @@ export type MaintenanceWorkOrderUpdateWithoutScheduleInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutScheduleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2092,6 +2146,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutScheduleInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyWithoutScheduleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2117,6 +2172,7 @@ export type MaintenanceWorkOrderUncheckedUpdateManyWithoutScheduleInput = {
 export type MaintenanceWorkOrderCreateManyAlertInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -2142,6 +2198,7 @@ export type MaintenanceWorkOrderCreateManyAlertInput = {
 export type MaintenanceWorkOrderUpdateWithoutAlertInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2168,6 +2225,7 @@ export type MaintenanceWorkOrderUpdateWithoutAlertInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutAlertInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2194,6 +2252,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutAlertInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyWithoutAlertInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2219,6 +2278,7 @@ export type MaintenanceWorkOrderUncheckedUpdateManyWithoutAlertInput = {
 export type MaintenanceWorkOrderCreateManyTechnicianInput = {
   id?: string
   orderNumber: string
+  externalId?: string | null
   type: $Enums.WorkOrderType
   status?: $Enums.WorkOrderStatus
   priority?: $Enums.Priority
@@ -2244,6 +2304,7 @@ export type MaintenanceWorkOrderCreateManyTechnicianInput = {
 export type MaintenanceWorkOrderUpdateWithoutTechnicianInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2270,6 +2331,7 @@ export type MaintenanceWorkOrderUpdateWithoutTechnicianInput = {
 export type MaintenanceWorkOrderUncheckedUpdateWithoutTechnicianInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2296,6 +2358,7 @@ export type MaintenanceWorkOrderUncheckedUpdateWithoutTechnicianInput = {
 export type MaintenanceWorkOrderUncheckedUpdateManyWithoutTechnicianInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumWorkOrderTypeFieldUpdateOperationsInput | $Enums.WorkOrderType
   status?: Prisma.EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -2352,6 +2415,7 @@ export type MaintenanceWorkOrderCountOutputTypeCountPartUsagesArgs<ExtArgs exten
 export type MaintenanceWorkOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   orderNumber?: boolean
+  externalId?: boolean
   type?: boolean
   status?: boolean
   priority?: boolean
@@ -2386,6 +2450,7 @@ export type MaintenanceWorkOrderSelect<ExtArgs extends runtime.Types.Extensions.
 export type MaintenanceWorkOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   orderNumber?: boolean
+  externalId?: boolean
   type?: boolean
   status?: boolean
   priority?: boolean
@@ -2418,6 +2483,7 @@ export type MaintenanceWorkOrderSelectCreateManyAndReturn<ExtArgs extends runtim
 export type MaintenanceWorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   orderNumber?: boolean
+  externalId?: boolean
   type?: boolean
   status?: boolean
   priority?: boolean
@@ -2450,6 +2516,7 @@ export type MaintenanceWorkOrderSelectUpdateManyAndReturn<ExtArgs extends runtim
 export type MaintenanceWorkOrderSelectScalar = {
   id?: boolean
   orderNumber?: boolean
+  externalId?: boolean
   type?: boolean
   status?: boolean
   priority?: boolean
@@ -2473,7 +2540,7 @@ export type MaintenanceWorkOrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MaintenanceWorkOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "type" | "status" | "priority" | "title" | "description" | "assetId" | "assigneeId" | "technicianId" | "scheduleId" | "alertId" | "organizationId" | "estimatedHours" | "actualHours" | "laborCost" | "partsCost" | "notes" | "dueDate" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceWorkOrder"]>
+export type MaintenanceWorkOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "externalId" | "type" | "status" | "priority" | "title" | "description" | "assetId" | "assigneeId" | "technicianId" | "scheduleId" | "alertId" | "organizationId" | "estimatedHours" | "actualHours" | "laborCost" | "partsCost" | "notes" | "dueDate" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceWorkOrder"]>
 export type MaintenanceWorkOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignee?: boolean | Prisma.MaintenanceWorkOrder$assigneeArgs<ExtArgs>
@@ -2515,6 +2582,7 @@ export type $MaintenanceWorkOrderPayload<ExtArgs extends runtime.Types.Extension
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     orderNumber: string
+    externalId: string | null
     type: $Enums.WorkOrderType
     status: $Enums.WorkOrderStatus
     priority: $Enums.Priority
@@ -2968,6 +3036,7 @@ export interface Prisma__MaintenanceWorkOrderClient<T, Null = never, ExtArgs ext
 export interface MaintenanceWorkOrderFieldRefs {
   readonly id: Prisma.FieldRef<"MaintenanceWorkOrder", 'String'>
   readonly orderNumber: Prisma.FieldRef<"MaintenanceWorkOrder", 'String'>
+  readonly externalId: Prisma.FieldRef<"MaintenanceWorkOrder", 'String'>
   readonly type: Prisma.FieldRef<"MaintenanceWorkOrder", 'WorkOrderType'>
   readonly status: Prisma.FieldRef<"MaintenanceWorkOrder", 'WorkOrderStatus'>
   readonly priority: Prisma.FieldRef<"MaintenanceWorkOrder", 'Priority'>

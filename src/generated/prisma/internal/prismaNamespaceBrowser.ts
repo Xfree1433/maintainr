@@ -70,7 +70,9 @@ export const ModelName = {
   Technician: 'Technician',
   DowntimeEvent: 'DowntimeEvent',
   AuditLog: 'AuditLog',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  Connector: 'Connector',
+  SyncLog: 'SyncLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -204,6 +206,7 @@ export const AssetScalarFieldEnum = {
   id: 'id',
   assetTag: 'assetTag',
   name: 'name',
+  externalId: 'externalId',
   description: 'description',
   status: 'status',
   criticality: 'criticality',
@@ -242,6 +245,7 @@ export type SensorReadingScalarFieldEnum = (typeof SensorReadingScalarFieldEnum)
 export const MaintenanceWorkOrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
+  externalId: 'externalId',
   type: 'type',
   status: 'status',
   priority: 'priority',
@@ -401,6 +405,49 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const ConnectorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  status: 'status',
+  direction: 'direction',
+  config: 'config',
+  fieldMapping: 'fieldMapping',
+  syncEntities: 'syncEntities',
+  syncFrequency: 'syncFrequency',
+  lastSyncAt: 'lastSyncAt',
+  lastSyncStatus: 'lastSyncStatus',
+  lastSyncCount: 'lastSyncCount',
+  errorMessage: 'errorMessage',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ConnectorScalarFieldEnum = (typeof ConnectorScalarFieldEnum)[keyof typeof ConnectorScalarFieldEnum]
+
+
+export const SyncLogScalarFieldEnum = {
+  id: 'id',
+  connectorId: 'connectorId',
+  direction: 'direction',
+  entity: 'entity',
+  status: 'status',
+  recordsRead: 'recordsRead',
+  recordsCreated: 'recordsCreated',
+  recordsUpdated: 'recordsUpdated',
+  recordsSkipped: 'recordsSkipped',
+  recordsFailed: 'recordsFailed',
+  errorDetails: 'errorDetails',
+  duration: 'duration',
+  organizationId: 'organizationId',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type SyncLogScalarFieldEnum = (typeof SyncLogScalarFieldEnum)[keyof typeof SyncLogScalarFieldEnum]
 
 
 export const SortOrder = {

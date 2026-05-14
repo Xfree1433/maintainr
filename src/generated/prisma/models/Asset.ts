@@ -38,6 +38,7 @@ export type AssetMinAggregateOutputType = {
   id: string | null
   assetTag: string | null
   name: string | null
+  externalId: string | null
   description: string | null
   status: $Enums.AssetStatus | null
   criticality: $Enums.Criticality | null
@@ -61,6 +62,7 @@ export type AssetMaxAggregateOutputType = {
   id: string | null
   assetTag: string | null
   name: string | null
+  externalId: string | null
   description: string | null
   status: $Enums.AssetStatus | null
   criticality: $Enums.Criticality | null
@@ -84,6 +86,7 @@ export type AssetCountAggregateOutputType = {
   id: number
   assetTag: number
   name: number
+  externalId: number
   description: number
   status: number
   criticality: number
@@ -117,6 +120,7 @@ export type AssetMinAggregateInputType = {
   id?: true
   assetTag?: true
   name?: true
+  externalId?: true
   description?: true
   status?: true
   criticality?: true
@@ -140,6 +144,7 @@ export type AssetMaxAggregateInputType = {
   id?: true
   assetTag?: true
   name?: true
+  externalId?: true
   description?: true
   status?: true
   criticality?: true
@@ -163,6 +168,7 @@ export type AssetCountAggregateInputType = {
   id?: true
   assetTag?: true
   name?: true
+  externalId?: true
   description?: true
   status?: true
   criticality?: true
@@ -273,6 +279,7 @@ export type AssetGroupByOutputType = {
   id: string
   assetTag: string
   name: string
+  externalId: string | null
   description: string | null
   status: $Enums.AssetStatus
   criticality: $Enums.Criticality
@@ -319,6 +326,7 @@ export type AssetWhereInput = {
   id?: Prisma.StringFilter<"Asset"> | string
   assetTag?: Prisma.StringFilter<"Asset"> | string
   name?: Prisma.StringFilter<"Asset"> | string
+  externalId?: Prisma.StringNullableFilter<"Asset"> | string | null
   description?: Prisma.StringNullableFilter<"Asset"> | string | null
   status?: Prisma.EnumAssetStatusFilter<"Asset"> | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFilter<"Asset"> | $Enums.Criticality
@@ -350,6 +358,7 @@ export type AssetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   assetTag?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -385,6 +394,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AssetWhereInput | Prisma.AssetWhereInput[]
   assetTag?: Prisma.StringFilter<"Asset"> | string
   name?: Prisma.StringFilter<"Asset"> | string
+  externalId?: Prisma.StringNullableFilter<"Asset"> | string | null
   description?: Prisma.StringNullableFilter<"Asset"> | string | null
   status?: Prisma.EnumAssetStatusFilter<"Asset"> | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFilter<"Asset"> | $Enums.Criticality
@@ -416,6 +426,7 @@ export type AssetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   assetTag?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -447,6 +458,7 @@ export type AssetScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Asset"> | string
   assetTag?: Prisma.StringWithAggregatesFilter<"Asset"> | string
   name?: Prisma.StringWithAggregatesFilter<"Asset"> | string
+  externalId?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
   status?: Prisma.EnumAssetStatusWithAggregatesFilter<"Asset"> | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityWithAggregatesFilter<"Asset"> | $Enums.Criticality
@@ -470,6 +482,7 @@ export type AssetCreateInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -498,6 +511,7 @@ export type AssetUncheckedCreateInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -526,6 +540,7 @@ export type AssetUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -554,6 +569,7 @@ export type AssetUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -582,6 +598,7 @@ export type AssetCreateManyInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -605,6 +622,7 @@ export type AssetUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -625,6 +643,7 @@ export type AssetUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -663,6 +682,7 @@ export type AssetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   assetTag?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -690,6 +710,7 @@ export type AssetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   assetTag?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -713,6 +734,7 @@ export type AssetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   assetTag?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -957,6 +979,7 @@ export type AssetCreateWithoutOrganizationInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -984,6 +1007,7 @@ export type AssetUncheckedCreateWithoutOrganizationInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1040,6 +1064,7 @@ export type AssetScalarWhereInput = {
   id?: Prisma.StringFilter<"Asset"> | string
   assetTag?: Prisma.StringFilter<"Asset"> | string
   name?: Prisma.StringFilter<"Asset"> | string
+  externalId?: Prisma.StringNullableFilter<"Asset"> | string | null
   description?: Prisma.StringNullableFilter<"Asset"> | string | null
   status?: Prisma.EnumAssetStatusFilter<"Asset"> | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFilter<"Asset"> | $Enums.Criticality
@@ -1063,6 +1088,7 @@ export type AssetCreateWithoutFacilityInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1090,6 +1116,7 @@ export type AssetUncheckedCreateWithoutFacilityInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1143,6 +1170,7 @@ export type AssetCreateWithoutCategoryInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1170,6 +1198,7 @@ export type AssetUncheckedCreateWithoutCategoryInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1223,6 +1252,7 @@ export type AssetCreateWithoutSensorReadingsInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1250,6 +1280,7 @@ export type AssetUncheckedCreateWithoutSensorReadingsInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1293,6 +1324,7 @@ export type AssetUpdateWithoutSensorReadingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1320,6 +1352,7 @@ export type AssetUncheckedUpdateWithoutSensorReadingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1347,6 +1380,7 @@ export type AssetCreateWithoutWorkOrdersInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1374,6 +1408,7 @@ export type AssetUncheckedCreateWithoutWorkOrdersInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1417,6 +1452,7 @@ export type AssetUpdateWithoutWorkOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1444,6 +1480,7 @@ export type AssetUncheckedUpdateWithoutWorkOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1471,6 +1508,7 @@ export type AssetCreateWithoutSchedulesInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1498,6 +1536,7 @@ export type AssetUncheckedCreateWithoutSchedulesInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1541,6 +1580,7 @@ export type AssetUpdateWithoutSchedulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1568,6 +1608,7 @@ export type AssetUncheckedUpdateWithoutSchedulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1595,6 +1636,7 @@ export type AssetCreateWithoutPredictiveAlertsInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1622,6 +1664,7 @@ export type AssetUncheckedCreateWithoutPredictiveAlertsInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1665,6 +1708,7 @@ export type AssetUpdateWithoutPredictiveAlertsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1692,6 +1736,7 @@ export type AssetUncheckedUpdateWithoutPredictiveAlertsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1719,6 +1764,7 @@ export type AssetCreateWithoutDowntimeEventsInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1746,6 +1792,7 @@ export type AssetUncheckedCreateWithoutDowntimeEventsInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1789,6 +1836,7 @@ export type AssetUpdateWithoutDowntimeEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1816,6 +1864,7 @@ export type AssetUncheckedUpdateWithoutDowntimeEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1843,6 +1892,7 @@ export type AssetCreateManyOrganizationInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1865,6 +1915,7 @@ export type AssetUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1892,6 +1943,7 @@ export type AssetUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1919,6 +1971,7 @@ export type AssetUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1941,6 +1994,7 @@ export type AssetCreateManyFacilityInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -1963,6 +2017,7 @@ export type AssetUpdateWithoutFacilityInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -1990,6 +2045,7 @@ export type AssetUncheckedUpdateWithoutFacilityInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -2017,6 +2073,7 @@ export type AssetUncheckedUpdateManyWithoutFacilityInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -2039,6 +2096,7 @@ export type AssetCreateManyCategoryInput = {
   id?: string
   assetTag: string
   name: string
+  externalId?: string | null
   description?: string | null
   status?: $Enums.AssetStatus
   criticality?: $Enums.Criticality
@@ -2061,6 +2119,7 @@ export type AssetUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -2088,6 +2147,7 @@ export type AssetUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -2115,6 +2175,7 @@ export type AssetUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetTag?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
   criticality?: Prisma.EnumCriticalityFieldUpdateOperationsInput | $Enums.Criticality
@@ -2204,6 +2265,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   assetTag?: boolean
   name?: boolean
+  externalId?: boolean
   description?: boolean
   status?: boolean
   criticality?: boolean
@@ -2236,6 +2298,7 @@ export type AssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   assetTag?: boolean
   name?: boolean
+  externalId?: boolean
   description?: boolean
   status?: boolean
   criticality?: boolean
@@ -2262,6 +2325,7 @@ export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   assetTag?: boolean
   name?: boolean
+  externalId?: boolean
   description?: boolean
   status?: boolean
   criticality?: boolean
@@ -2288,6 +2352,7 @@ export type AssetSelectScalar = {
   id?: boolean
   assetTag?: boolean
   name?: boolean
+  externalId?: boolean
   description?: boolean
   status?: boolean
   criticality?: boolean
@@ -2307,7 +2372,7 @@ export type AssetSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetTag" | "name" | "description" | "status" | "criticality" | "manufacturer" | "model" | "serialNumber" | "installDate" | "warrantyExpiry" | "location" | "facilityId" | "categoryId" | "organizationId" | "imageUrl" | "specifications" | "purchaseCost" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
+export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetTag" | "name" | "externalId" | "description" | "status" | "criticality" | "manufacturer" | "model" | "serialNumber" | "installDate" | "warrantyExpiry" | "location" | "facilityId" | "categoryId" | "organizationId" | "imageUrl" | "specifications" | "purchaseCost" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
 export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   facility?: boolean | Prisma.Asset$facilityArgs<ExtArgs>
   category?: boolean | Prisma.Asset$categoryArgs<ExtArgs>
@@ -2346,6 +2411,7 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: string
     assetTag: string
     name: string
+    externalId: string | null
     description: string | null
     status: $Enums.AssetStatus
     criticality: $Enums.Criticality
@@ -2797,6 +2863,7 @@ export interface AssetFieldRefs {
   readonly id: Prisma.FieldRef<"Asset", 'String'>
   readonly assetTag: Prisma.FieldRef<"Asset", 'String'>
   readonly name: Prisma.FieldRef<"Asset", 'String'>
+  readonly externalId: Prisma.FieldRef<"Asset", 'String'>
   readonly description: Prisma.FieldRef<"Asset", 'String'>
   readonly status: Prisma.FieldRef<"Asset", 'AssetStatus'>
   readonly criticality: Prisma.FieldRef<"Asset", 'Criticality'>

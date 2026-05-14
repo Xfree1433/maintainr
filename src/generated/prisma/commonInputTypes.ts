@@ -521,6 +521,74 @@ export type EnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumNotificationTypeFilter<$PrismaModel>
 }
 
+export type EnumConnectorTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorType | Prisma.EnumConnectorTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorTypeFilter<$PrismaModel> | $Enums.ConnectorType
+}
+
+export type EnumConnectorStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorStatus | Prisma.EnumConnectorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorStatusFilter<$PrismaModel> | $Enums.ConnectorStatus
+}
+
+export type EnumSyncDirectionFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncDirection | Prisma.EnumSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncDirectionFilter<$PrismaModel> | $Enums.SyncDirection
+}
+
+export type EnumConnectorTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorType | Prisma.EnumConnectorTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorTypeWithAggregatesFilter<$PrismaModel> | $Enums.ConnectorType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConnectorTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConnectorTypeFilter<$PrismaModel>
+}
+
+export type EnumConnectorStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorStatus | Prisma.EnumConnectorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConnectorStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConnectorStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConnectorStatusFilter<$PrismaModel>
+}
+
+export type EnumSyncDirectionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncDirection | Prisma.EnumSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncDirectionWithAggregatesFilter<$PrismaModel> | $Enums.SyncDirection
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSyncDirectionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSyncDirectionFilter<$PrismaModel>
+}
+
+export type EnumSyncLogStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncLogStatus | Prisma.EnumSyncLogStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncLogStatusFilter<$PrismaModel> | $Enums.SyncLogStatus
+}
+
+export type EnumSyncLogStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncLogStatus | Prisma.EnumSyncLogStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncLogStatusWithAggregatesFilter<$PrismaModel> | $Enums.SyncLogStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSyncLogStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSyncLogStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1017,6 +1085,74 @@ export type NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumNotificationTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumNotificationTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumConnectorTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorType | Prisma.EnumConnectorTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorTypeFilter<$PrismaModel> | $Enums.ConnectorType
+}
+
+export type NestedEnumConnectorStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorStatus | Prisma.EnumConnectorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorStatusFilter<$PrismaModel> | $Enums.ConnectorStatus
+}
+
+export type NestedEnumSyncDirectionFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncDirection | Prisma.EnumSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncDirectionFilter<$PrismaModel> | $Enums.SyncDirection
+}
+
+export type NestedEnumConnectorTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorType | Prisma.EnumConnectorTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorType[] | Prisma.ListEnumConnectorTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorTypeWithAggregatesFilter<$PrismaModel> | $Enums.ConnectorType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConnectorTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConnectorTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumConnectorStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConnectorStatus | Prisma.EnumConnectorStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConnectorStatus[] | Prisma.ListEnumConnectorStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConnectorStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConnectorStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConnectorStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConnectorStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSyncDirectionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncDirection | Prisma.EnumSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncDirection[] | Prisma.ListEnumSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncDirectionWithAggregatesFilter<$PrismaModel> | $Enums.SyncDirection
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSyncDirectionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSyncDirectionFilter<$PrismaModel>
+}
+
+export type NestedEnumSyncLogStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncLogStatus | Prisma.EnumSyncLogStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncLogStatusFilter<$PrismaModel> | $Enums.SyncLogStatus
+}
+
+export type NestedEnumSyncLogStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SyncLogStatus | Prisma.EnumSyncLogStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SyncLogStatus[] | Prisma.ListEnumSyncLogStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSyncLogStatusWithAggregatesFilter<$PrismaModel> | $Enums.SyncLogStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSyncLogStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSyncLogStatusFilter<$PrismaModel>
 }
 
 

@@ -117,3 +117,13 @@ export type AuditLog = Prisma.AuditLogModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model Connector
+ * 
+ */
+export type Connector = Prisma.ConnectorModel
+/**
+ * Model SyncLog
+ * 
+ */
+export type SyncLog = Prisma.SyncLogModel
