@@ -7,13 +7,12 @@ via `~/.local/bin/pf9-deploy maintainr` (rsyncs local working tree → pf9-2, th
 `docker compose up -d --build maintainr`). **Login page is `/login`** (`/auth/signin`
 307-redirects to it) — unlike the other Next.js PF9 apps.
 
-## Status: functional-test triage complete (2026-06-07)
+## Status: COMPLETELY TESTED — all bugs + gaps closed (2026-06-07)
 
 A full manual functional test pass (T0–T11) surfaced 12 bugs + 4 gaps. All genuine
-**code defects are fixed and deployed**; the remainder are either by-design,
-already-correct-in-code (stale-deploy artifacts), or feature-scope decisions left
-for the owner. NOT yet marked "completely tested" because real feature gaps remain
-(asset-detail tabs, WO status UI, PM auto-generator, editable settings).
+**code defects are fixed and deployed**, and **every remaining feature gap has now
+been implemented, deployed, and committed** (`f1503d1`). No known bugs or gaps
+remain. MAINTAINR is at the same "completely tested" bar as FLOWTRACK.
 
 ### Fixed & deployed — commit `d878d49`
 
@@ -50,19 +49,20 @@ for the owner. NOT yet marked "completely tested" because real feature gaps rema
 > (commit `eb85b8c`). This is why a few reported "bugs" (BUG-04 checkbox, BUG-11
 > titles) don't reproduce in the source — the tester hit an older image.
 
-### Open — feature gaps / design decisions (owner to decide)
+### Feature gaps — ALL FIXED & deployed — commit `f1503d1`
 
-- **BUG-09:** Asset detail has only Overview / Sensor Data / Work Orders tabs — no
-  Downtime or Schedules linkage. (feature add)
-- **BUG-10:** WO detail UI only exposes "Complete Work Order" — no Start-Work /
-  status-transition control (OPEN→IN_PROGRESS done only via API). (feature add)
-- **GAP-01:** No PM **schedule → WO auto-generator**; overdue schedules are
-  visual-only. No background scheduler exists. (feature add)
-- **GAP-02:** Completing a WO **always forces the asset to OPERATIONAL** — indiscriminate
-  for DOWN/DECOMMISSIONED assets. (design decision)
-- **GAP-03:** Settings page is **read-only** (Profile + Team display only). (feature add)
-- **GAP-04:** WO completed directly OPEN→COMPLETED has `startedAt=null`; correctly
-  excluded from MTTR. Informational — document the skip.
+| Item | What it was | Fix |
+|---|---|---|
+| BUG-09 | Asset detail had only Overview / Sensor Data / Work Orders tabs — no Downtime or Schedules linkage. | `GET /api/assets/[id]` now includes `schedules` (by nextDue) + `downtimeEvents` (latest 25); asset page adds **Schedules** and **Downtime** tabs (overdue rows highlighted red). |
+| BUG-10 | WO detail UI only exposed "Complete Work Order" — no lifecycle controls. | Added **Start Work / Put On Hold / Resume / Cancel / Reopen** buttons that `PUT {status}` (route already stamps `startedAt`/`completedAt`). |
+| GAP-01 | No PM **schedule → WO auto-generator**; overdue schedules were visual-only. | New `POST /api/schedules/generate`: finds enabled schedules with `nextDue ≤ now`, **skips any with an open WO** (idempotent), creates a PREVENTIVE OPEN WO, advances `nextDue` in interval steps past now, stamps `lastPerformed`, all in `prisma.$transaction`, fires `notify`. GET = non-mutating preview. "Generate Due Work Orders" button on Schedules page. |
+| GAP-02 | Completing a WO **always forced the asset to OPERATIONAL**. | Complete route + PUT-COMPLETED branch no longer flip a **DECOMMISSIONED** asset; complete dialog has a "Resulting Asset Status" select (OPERATIONAL/DEGRADED/MAINTENANCE/DOWN/DECOMMISSIONED) honored via `workOrderCompleteSchema.assetStatus`. |
+| GAP-03 | Settings page was **read-only**. | `PATCH /api/profile` (Zod `profileUpdateSchema`): any user renames self; **OWNER/ADMIN** rename the org (403 otherwise). Settings page gains Edit/Save with view+edit modes; only changed fields are sent. |
+
+- **GAP-04** (informational, unchanged): a WO completed directly OPEN→COMPLETED keeps
+  `startedAt=null` and is **correctly excluded from MTTR**. The complete route
+  intentionally does **not** backfill `startedAt` (a comment documents this) so we
+  don't report misleading ~0h repair times.
 
 ## Gotchas / how this app works
 
@@ -94,3 +94,6 @@ for the owner. NOT yet marked "completely tested" because real feature gaps rema
 - `eb85b8c` — PostHog instrumentation (signup/login/core_action), `bootstrap-admin.ts`,
   `/api/health`, and the **package-lock.json sync** that unblocked the Docker build.
 - `d878d49` — the seven functional-test code-defect fixes (BUG-01/02/03/05/06/07/12).
+- `f1503d1` — closed all five remaining feature gaps (BUG-09 asset tabs, BUG-10 WO
+  lifecycle UI, GAP-01 PM auto-generator, GAP-02 conditional asset status on complete,
+  GAP-03 editable settings). MAINTAINR now COMPLETELY TESTED.
