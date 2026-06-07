@@ -43,6 +43,18 @@ export const workOrderUpdateSchema = workOrderCreateSchema.partial().extend({
   actualHours: z.coerce.number().min(0).optional(),
 });
 
+// Completing a work order. `assetStatus` is an optional explicit choice of the
+// resulting asset status; when omitted the server restores OPERATIONAL unless
+// the asset is DECOMMISSIONED (GAP-02 — completion no longer blindly forces
+// every asset, including decommissioned ones, back to OPERATIONAL).
+export const workOrderCompleteSchema = z.object({
+  actualHours: z.coerce.number().min(0).optional(),
+  notes: z.string().max(2000).optional(),
+  assetStatus: z
+    .enum(["OPERATIONAL", "DEGRADED", "DOWN", "MAINTENANCE", "DECOMMISSIONED"])
+    .optional(),
+});
+
 // ─── Schedules ───────────────────────────────────────────────────
 
 export const scheduleCreateSchema = z.object({
@@ -108,6 +120,18 @@ export const partUsageCreateSchema = z.object({
   partId: z.string().min(1),
   quantity: z.coerce.number().int().min(1),
 });
+
+// ─── Profile / Settings ──────────────────────────────────────────
+
+export const profileUpdateSchema = z
+  .object({
+    name: z.string().min(1).max(200).optional(),
+    // Organization rename — only applied for OWNER/ADMIN (enforced in route).
+    organizationName: z.string().min(1).max(200).optional(),
+  })
+  .refine((d) => d.name !== undefined || d.organizationName !== undefined, {
+    message: "Nothing to update",
+  });
 
 // ─── Facility ────────────────────────────────────────────────────
 

@@ -28,6 +28,13 @@ export async function GET(
         orderBy: { timestamp: "desc" },
         take: 20,
       },
+      schedules: {
+        orderBy: { nextDue: "asc" },
+      },
+      downtimeEvents: {
+        orderBy: { startedAt: "desc" },
+        take: 25,
+      },
     },
   });
 

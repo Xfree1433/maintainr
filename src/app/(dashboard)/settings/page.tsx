@@ -26,6 +26,10 @@ export default function SettingsPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", organizationName: "" });
 
   const fetchProfile = useCallback(async () => {
     const res = await fetch("/api/profile");
@@ -33,6 +37,51 @@ export default function SettingsPage() {
       setProfile(await res.json());
     }
   }, []);
+
+  const canEditOrg = profile?.role === "OWNER" || profile?.role === "ADMIN";
+
+  const startEdit = () => {
+    setForm({
+      name: profile?.user.name ?? "",
+      organizationName: profile?.organization?.name ?? "",
+    });
+    setError(null);
+    setEditing(true);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setError(null);
+    const payload: Record<string, unknown> = {};
+    if (form.name && form.name !== profile?.user.name) payload.name = form.name;
+    if (
+      canEditOrg &&
+      form.organizationName &&
+      form.organizationName !== profile?.organization?.name
+    ) {
+      payload.organizationName = form.organizationName;
+    }
+
+    if (Object.keys(payload).length === 0) {
+      setEditing(false);
+      setSaving(false);
+      return;
+    }
+
+    const res = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      setProfile(await res.json());
+      setEditing(false);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error?.formErrors?.[0] ?? data.error ?? "Failed to save changes.");
+    }
+    setSaving(false);
+  };
 
   const fetchTeam = useCallback(async () => {
     const res = await fetch("/api/team");
@@ -56,7 +105,7 @@ export default function SettingsPage() {
       <QuickGuide
         title="Quick Guide: Settings"
         steps={[
-          "View your profile information including name, email, role, and organization.",
+          "Click Edit in the Profile section to update your display name. Owners and admins can also rename the organization.",
           "The Team section shows all members of your organization with their roles.",
           "Organization roles: Owner has full access, Admin manages settings, Manager oversees operations, Operator handles day-to-day tasks.",
         ]}
@@ -64,8 +113,87 @@ export default function SettingsPage() {
 
       {/* Profile Section */}
       <section className="border rounded-lg p-6 bg-white">
-        <h2 className="text-lg font-semibold mb-4">Profile</h2>
-        {profile ? (
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Profile</h2>
+          {profile && !editing && (
+            <button
+              onClick={startEdit}
+              className="px-3 py-1.5 text-sm border border-orange-600 text-orange-700 rounded-lg hover:bg-orange-50"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        {!profile ? (
+          <p className="text-gray-500">Unable to load profile.</p>
+        ) : editing ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">Email</label>
+                <input
+                  type="text"
+                  value={profile.user.email}
+                  disabled
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-50 text-gray-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">
+                  Organization
+                </label>
+                <input
+                  type="text"
+                  value={form.organizationName}
+                  onChange={(e) =>
+                    setForm({ ...form, organizationName: e.target.value })
+                  }
+                  disabled={!canEditOrg}
+                  className={`w-full px-3 py-2 border rounded-lg ${canEditOrg ? "" : "bg-gray-50 text-gray-500"}`}
+                />
+                {!canEditOrg && (
+                  <p className="mt-1 text-xs text-gray-400">
+                    Only an owner or admin can rename the organization.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+              <button
+                onClick={() => {
+                  setEditing(false);
+                  setError(null);
+                }}
+                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-500">Name</p>
@@ -95,8 +223,6 @@ export default function SettingsPage() {
               </p>
             </div>
           </div>
-        ) : (
-          <p className="text-gray-500">Unable to load profile.</p>
         )}
       </section>
 

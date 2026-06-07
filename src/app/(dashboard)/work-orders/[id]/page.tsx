@@ -69,7 +69,12 @@ export default function WorkOrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
-  const [completeForm, setCompleteForm] = useState({ actualHours: "", notes: "" });
+  const [completeForm, setCompleteForm] = useState({
+    actualHours: "",
+    notes: "",
+    assetStatus: "OPERATIONAL",
+  });
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const [showAddPart, setShowAddPart] = useState(false);
   const [parts, setParts] = useState<Part[]>([]);
   const [partForm, setPartForm] = useState({ partId: "", quantity: "1" });
@@ -103,6 +108,7 @@ export default function WorkOrderDetailPage() {
     const payload: Record<string, unknown> = {};
     if (completeForm.actualHours) payload.actualHours = Number(completeForm.actualHours);
     if (completeForm.notes) payload.notes = completeForm.notes;
+    if (completeForm.assetStatus) payload.assetStatus = completeForm.assetStatus;
 
     const res = await fetch(`/api/work-orders/${id}/complete`, {
       method: "POST",
@@ -115,6 +121,19 @@ export default function WorkOrderDetailPage() {
       fetchWorkOrder();
     }
     setCompleting(false);
+  };
+
+  const handleStatusChange = async (status: string) => {
+    setUpdatingStatus(true);
+    const res = await fetch(`/api/work-orders/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (res.ok) {
+      fetchWorkOrder();
+    }
+    setUpdatingStatus(false);
   };
 
   const handleAddPart = async () => {
@@ -144,7 +163,11 @@ export default function WorkOrderDetailPage() {
     return <div className="p-6 text-gray-500">Work order not found.</div>;
   }
 
-  const canComplete = workOrder.status === "OPEN" || workOrder.status === "IN_PROGRESS";
+  const status = workOrder.status;
+  const isClosed = status === "COMPLETED" || status === "CANCELLED";
+  const canComplete = status === "OPEN" || status === "IN_PROGRESS" || status === "ON_HOLD";
+  const btn =
+    "px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50";
 
   return (
     <div className="p-6 space-y-6">
@@ -181,22 +204,72 @@ export default function WorkOrderDetailPage() {
             </span>
           </div>
         </div>
-        {canComplete && (
-          <button
-            onClick={() => setShowComplete(true)}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-          >
-            Complete Work Order
-          </button>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {status === "OPEN" && (
+            <button
+              onClick={() => handleStatusChange("IN_PROGRESS")}
+              disabled={updatingStatus}
+              className={`${btn} bg-blue-600 text-white hover:bg-blue-700`}
+            >
+              Start Work
+            </button>
+          )}
+          {status === "IN_PROGRESS" && (
+            <button
+              onClick={() => handleStatusChange("ON_HOLD")}
+              disabled={updatingStatus}
+              className={`${btn} bg-yellow-500 text-white hover:bg-yellow-600`}
+            >
+              Put On Hold
+            </button>
+          )}
+          {status === "ON_HOLD" && (
+            <button
+              onClick={() => handleStatusChange("IN_PROGRESS")}
+              disabled={updatingStatus}
+              className={`${btn} bg-blue-600 text-white hover:bg-blue-700`}
+            >
+              Resume Work
+            </button>
+          )}
+          {canComplete && (
+            <button
+              onClick={() => setShowComplete(true)}
+              className={`${btn} bg-green-600 text-white hover:bg-green-700`}
+            >
+              Complete Work Order
+            </button>
+          )}
+          {!isClosed && (
+            <button
+              onClick={() => {
+                if (confirm("Cancel this work order?")) handleStatusChange("CANCELLED");
+              }}
+              disabled={updatingStatus}
+              className={`${btn} border border-gray-300 text-gray-700 hover:bg-gray-50`}
+            >
+              Cancel WO
+            </button>
+          )}
+          {isClosed && (
+            <button
+              onClick={() => handleStatusChange(status === "CANCELLED" ? "OPEN" : "IN_PROGRESS")}
+              disabled={updatingStatus}
+              className={`${btn} border border-gray-300 text-gray-700 hover:bg-gray-50`}
+            >
+              Reopen
+            </button>
+          )}
+        </div>
       </div>
 
       <QuickGuide
         title="Quick Guide: Work Order Details"
         steps={[
           "View the full work order including assigned technician, estimated vs actual hours, and linked asset.",
+          "Move the order through its lifecycle with Start Work, Put On Hold, Resume, and Cancel. Starting work records the start time.",
           "Add parts used during the repair using the 'Add Part' button. Part inventory is automatically decremented.",
-          "Click 'Complete Work Order' when finished. This records the completion time and restores the asset to operational status.",
+          "Click 'Complete Work Order' when finished. You choose the resulting asset status (defaults to Operational).",
         ]}
       />
 
@@ -349,6 +422,28 @@ export default function WorkOrderDetailPage() {
                 className="w-full px-3 py-2 border rounded-lg"
                 rows={3}
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Resulting Asset Status
+              </label>
+              <select
+                value={completeForm.assetStatus}
+                onChange={(e) =>
+                  setCompleteForm({ ...completeForm, assetStatus: e.target.value })
+                }
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="OPERATIONAL">Operational</option>
+                <option value="DEGRADED">Degraded</option>
+                <option value="MAINTENANCE">Maintenance</option>
+                <option value="DOWN">Down</option>
+                <option value="DECOMMISSIONED">Decommissioned</option>
+              </select>
+              <p className="mt-1 text-xs text-gray-400">
+                Defaults to Operational. Choose another status if the asset is not
+                fully restored.
+              </p>
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <button

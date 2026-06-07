@@ -28,6 +28,30 @@ interface Asset {
   facility?: { id: string; name: string } | null;
   workOrders?: WorkOrder[];
   sensorReadings?: SensorReading[];
+  schedules?: Schedule[];
+  downtimeEvents?: DowntimeEvent[];
+}
+
+interface Schedule {
+  id: string;
+  name: string;
+  frequency: string;
+  intervalDays: number;
+  nextDue: string;
+  lastPerformed: string | null;
+  enabled: boolean;
+  estimatedHours: number | null;
+}
+
+interface DowntimeEvent {
+  id: string;
+  reason: string;
+  category: string | null;
+  planned: boolean;
+  startedAt: string;
+  endedAt: string | null;
+  durationMin: number | null;
+  notes: string | null;
 }
 
 interface WorkOrder {
@@ -171,6 +195,8 @@ export default function AssetDetailPage() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sensors">Sensor Data</TabsTrigger>
           <TabsTrigger value="workorders">Work Orders</TabsTrigger>
+          <TabsTrigger value="schedules">Schedules</TabsTrigger>
+          <TabsTrigger value="downtime">Downtime</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -306,6 +332,97 @@ export default function AssetDetailPage() {
                       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                         {new Date(wo.createdAt).toLocaleDateString()}
                       </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </TabsContent>
+
+        {/* Schedules Tab */}
+        <TabsContent value="schedules">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  {["Name", "Frequency", "Interval (days)", "Next Due", "Last Performed", "Enabled"].map((h) => (
+                    <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                {!asset.schedules || asset.schedules.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">No maintenance schedules for this asset.</td>
+                  </tr>
+                ) : (
+                  asset.schedules.map((s) => {
+                    const overdue = new Date(s.nextDue) < new Date();
+                    return (
+                      <tr key={s.id} className={overdue ? "bg-red-50 dark:bg-red-900/10" : "hover:bg-gray-50 dark:hover:bg-gray-800"}>
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{s.name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{s.frequency.replace("_", " ")}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{s.intervalDays}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <span className={overdue ? "text-red-600 font-medium" : "text-gray-900 dark:text-gray-100"}>
+                            {new Date(s.nextDue).toLocaleDateString()}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                          {s.lastPerformed ? new Date(s.lastPerformed).toLocaleDateString() : "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ${s.enabled ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300" : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"}`}>
+                            {s.enabled ? "ENABLED" : "DISABLED"}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </TabsContent>
+
+        {/* Downtime Tab */}
+        <TabsContent value="downtime">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  {["Started", "Ended", "Duration", "Reason", "Type", "Notes"].map((h) => (
+                    <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                {!asset.downtimeEvents || asset.downtimeEvents.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">No downtime events recorded for this asset.</td>
+                  </tr>
+                ) : (
+                  asset.downtimeEvents.map((d) => (
+                    <tr key={d.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{new Date(d.startedAt).toLocaleString()}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                        {d.endedAt ? new Date(d.endedAt).toLocaleString() : <span className="text-red-600 font-medium">Ongoing</span>}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                        {d.durationMin != null ? `${d.durationMin} min` : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{d.reason.replace(/_/g, " ")}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ${d.planned ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" : "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300"}`}>
+                          {d.planned ? "PLANNED" : "UNPLANNED"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">{d.notes ?? "—"}</td>
                     </tr>
                   ))
                 )}

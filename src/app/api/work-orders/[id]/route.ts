@@ -63,10 +63,17 @@ export async function PUT(
 
   if (parsed.data.status === "COMPLETED" && existing.status !== "COMPLETED") {
     data.completedAt = new Date();
-    await prisma.asset.update({
+    // GAP-02: don't force a DECOMMISSIONED asset back to OPERATIONAL.
+    const asset = await prisma.asset.findUnique({
       where: { id: existing.assetId },
-      data: { status: "OPERATIONAL" },
+      select: { status: true },
     });
+    if (asset && asset.status !== "DECOMMISSIONED") {
+      await prisma.asset.update({
+        where: { id: existing.assetId },
+        data: { status: "OPERATIONAL" },
+      });
+    }
   }
 
   const workOrder = await prisma.maintenanceWorkOrder.update({

@@ -56,6 +56,8 @@ export default function SchedulesPage() {
   const [showDialog, setShowDialog] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [genMessage, setGenMessage] = useState<string | null>(null);
 
   const emptyForm = {
     name: "",
@@ -166,19 +168,59 @@ export default function SchedulesPage() {
     fetchSchedules();
   };
 
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setGenMessage(null);
+    const res = await fetch("/api/schedules/generate", { method: "POST" });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.generated > 0) {
+        setGenMessage(
+          `Generated ${data.generated} work order${data.generated === 1 ? "" : "s"}` +
+            (data.skipped > 0 ? ` (${data.skipped} skipped — already open).` : ".")
+        );
+      } else if (data.dueCount > 0) {
+        setGenMessage(
+          `No new work orders — all ${data.dueCount} due schedule${data.dueCount === 1 ? "" : "s"} already have an open work order.`
+        );
+      } else {
+        setGenMessage("No schedules are due right now.");
+      }
+      fetchSchedules();
+    } else {
+      setGenMessage("Failed to generate work orders.");
+    }
+    setGenerating(false);
+  };
+
   const isOverdue = (nextDue: string) => new Date(nextDue) < new Date();
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Maintenance Schedules</h1>
-        <button
-          onClick={openCreate}
-          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-        >
-          + New Schedule
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="px-4 py-2 border border-orange-600 text-orange-700 rounded-lg hover:bg-orange-50 disabled:opacity-50"
+          >
+            {generating ? "Generating..." : "Generate Due Work Orders"}
+          </button>
+          <button
+            onClick={openCreate}
+            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+          >
+            + New Schedule
+          </button>
+        </div>
       </div>
+
+      {genMessage && (
+        <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-800">
+          {genMessage}
+        </div>
+      )}
 
       <QuickGuide
         title="Quick Guide: Maintenance Schedules"
