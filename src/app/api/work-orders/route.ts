@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { workOrderCreateSchema } from "@/lib/validators";
+import { captureServer } from "@/lib/posthog";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -75,6 +76,16 @@ export async function POST(req: NextRequest) {
     userId: session.user.id,
     organizationId: orgId,
   });
+
+  // Analytics: creating a work order is MAINTAINR's core action.
+  // Activation = first occurrence (derived in PostHog). Fire-and-forget on this path.
+  const actorId = (session.user.email ?? session.user.id) as string;
+  void captureServer(
+    "core_action_performed",
+    actorId,
+    { action: "work_order_created" },
+    { account: orgId, awaitFlush: false }
+  );
 
   return NextResponse.json({ workOrder }, { status: 201 });
 }

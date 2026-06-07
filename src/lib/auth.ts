@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { authConfig } from "@/lib/auth.config";
+import { captureServer } from "@/lib/posthog";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -75,6 +76,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         (session as any).role = token.role as string;
       }
       return session;
+    },
+  },
+  events: {
+    async signIn({ user }) {
+      if (user?.email) {
+        await captureServer("app_login", user.email, {});
+      }
     },
   },
 });

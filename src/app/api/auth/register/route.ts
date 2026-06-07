@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { captureServer, identifyServer } from "@/lib/posthog";
 
 const registerSchema = z.object({
   name: z.string().min(2),
@@ -60,6 +61,20 @@ export async function POST(req: Request) {
 
       return { userId: user.id, organizationId: organization.id };
     });
+
+    // Analytics: signup. distinctId = email to stitch with the storefront journey.
+    await identifyServer(email, {
+      email,
+      name,
+      signup_app: "maintainr",
+      organization: organizationName,
+    });
+    await captureServer(
+      "app_signup",
+      email,
+      { email, organization: organizationName },
+      { account: result.organizationId }
+    );
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {

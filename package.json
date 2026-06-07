@@ -12,7 +12,8 @@
     "db:push": "npx prisma db push",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
-    "db:reset": "npx prisma migrate reset"
+    "db:reset": "npx prisma migrate reset",
+    "bootstrap-admin": "npx tsx prisma/bootstrap-admin.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -38,6 +39,8 @@
     "next": "16.1.6",
     "next-auth": "^5.0.0-beta.30",
     "pg": "^8.20.0",
+    "posthog-js": "^1.160.0",
+    "posthog-node": "^4.2.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^3.8.0",

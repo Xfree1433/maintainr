@@ -31,6 +31,7 @@ export const authConfig: NextAuthConfig = {
         pathname.startsWith("/register") ||
         pathname.startsWith("/demo") ||
         pathname.startsWith("/api/auth") ||
+        pathname.startsWith("/api/health") ||
         pathname.startsWith("/api/external") ||
         pathname.startsWith("/_next") ||
         pathname.startsWith("/icons") ||
