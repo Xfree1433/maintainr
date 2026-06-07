@@ -23,15 +23,34 @@ export async function GET(req: NextRequest) {
         organizationId: orgId,
         status: "COMPLETED",
       },
-      select: { laborCost: true, partsCost: true },
+      select: {
+        laborCost: true,
+        partsCost: true,
+        actualHours: true,
+        technician: { select: { hourlyRate: true } },
+        partUsages: { select: { unitCost: true, quantity: true } },
+      },
     });
 
     let laborCost = 0;
     let partsCost = 0;
 
     for (const wo of workOrders) {
-      laborCost += Number(wo.laborCost ?? 0);
-      partsCost += Number(wo.partsCost ?? 0);
+      // Prefer stored snapshot columns when populated; otherwise derive cost
+      // live. laborCost = actualHours × technician hourlyRate; partsCost = sum
+      // of each PartUsage's unitCost × quantity. The stored columns are never
+      // written by the current code, so without this the report was always empty.
+      const storedLabor = Number(wo.laborCost ?? 0);
+      const derivedLabor =
+        (wo.actualHours ?? 0) * Number(wo.technician?.hourlyRate ?? 0);
+      laborCost += storedLabor > 0 ? storedLabor : derivedLabor;
+
+      const storedParts = Number(wo.partsCost ?? 0);
+      const derivedParts = wo.partUsages.reduce(
+        (sum, pu) => sum + Number(pu.unitCost ?? 0) * pu.quantity,
+        0
+      );
+      partsCost += storedParts > 0 ? storedParts : derivedParts;
     }
 
     if (laborCost === 0 && partsCost === 0) continue;

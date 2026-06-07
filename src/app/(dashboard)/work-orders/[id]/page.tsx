@@ -88,7 +88,8 @@ export default function WorkOrderDetailPage() {
     const res = await fetch("/api/parts");
     if (res.ok) {
       const data = await res.json();
-      setParts(data.parts ?? []);
+      // /api/parts returns a bare array; tolerate both shapes.
+      setParts(Array.isArray(data) ? data : data.parts ?? []);
     }
   }, []);
 
@@ -305,11 +306,13 @@ export default function WorkOrderDetailPage() {
                   <td className="p-2">{pu.part.name}</td>
                   <td className="p-2">{pu.quantity}</td>
                   <td className="p-2">
-                    {pu.unitCost != null ? `$${pu.unitCost.toFixed(2)}` : "-"}
+                    {pu.unitCost != null
+                      ? `$${Number(pu.unitCost).toFixed(2)}`
+                      : "-"}
                   </td>
                   <td className="p-2">
                     {pu.unitCost != null
-                      ? `$${(pu.unitCost * pu.quantity).toFixed(2)}`
+                      ? `$${(Number(pu.unitCost) * pu.quantity).toFixed(2)}`
                       : "-"}
                   </td>
                 </tr>

@@ -37,9 +37,11 @@ export async function GET(req: NextRequest) {
         wo.completedAt!.getTime() - wo.startedAt!.getTime();
     }
 
+    // 2-decimal precision: sub-6-minute repairs were rounding to 0.0 at one
+    // decimal, making fast repairs vanish from the report.
     const mttrHours = Math.round(
-      totalRepairTime / workOrders.length / (1000 * 60 * 60) * 10
-    ) / 10;
+      totalRepairTime / workOrders.length / (1000 * 60 * 60) * 100
+    ) / 100;
 
     results.push({
       assetTag: asset.assetTag,

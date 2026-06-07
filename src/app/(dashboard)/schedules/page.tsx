@@ -35,6 +35,18 @@ const FREQUENCIES = [
   "CUSTOM",
 ];
 
+// Canonical interval (in days) for each frequency. CUSTOM is omitted so the
+// user-entered intervalDays is preserved when they pick CUSTOM.
+const FREQUENCY_DAYS: Record<string, number> = {
+  DAILY: 1,
+  WEEKLY: 7,
+  BIWEEKLY: 14,
+  MONTHLY: 30,
+  QUARTERLY: 90,
+  SEMI_ANNUAL: 180,
+  ANNUAL: 365,
+};
+
 export default function SchedulesPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -74,7 +86,8 @@ export default function SchedulesPage() {
     const res = await fetch("/api/assets");
     if (res.ok) {
       const data = await res.json();
-      setAssets(data.assets ?? []);
+      // /api/assets returns a bare array; tolerate both shapes.
+      setAssets(Array.isArray(data) ? data : data.assets ?? []);
     }
   }, []);
 
@@ -338,7 +351,18 @@ export default function SchedulesPage() {
                 <label className="block text-sm font-medium mb-1">Frequency *</label>
                 <select
                   value={form.frequency}
-                  onChange={(e) => setForm({ ...form, frequency: e.target.value })}
+                  onChange={(e) => {
+                    const frequency = e.target.value;
+                    // Sync intervalDays to the canonical value for the chosen
+                    // frequency; keep the user's number when CUSTOM is selected.
+                    const days = FREQUENCY_DAYS[frequency];
+                    setForm({
+                      ...form,
+                      frequency,
+                      intervalDays:
+                        days != null ? String(days) : form.intervalDays,
+                    });
+                  }}
                   className="w-full px-3 py-2 border rounded-lg"
                 >
                   {FREQUENCIES.map((f) => (

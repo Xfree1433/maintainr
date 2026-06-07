@@ -54,27 +54,43 @@ export async function POST(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const part = await prisma.part.findUnique({
-    where: { id: parsed.data.partId },
+  // Scope the part to this org so you can't attach (or decrement) another
+  // tenant's inventory by guessing an id.
+  const part = await prisma.part.findFirst({
+    where: { id: parsed.data.partId, organizationId: orgId },
   });
   if (!part) {
     return NextResponse.json({ error: "Part not found" }, { status: 404 });
   }
 
-  const partUsage = await prisma.partUsage.create({
-    data: {
-      workOrderId: id,
-      partId: parsed.data.partId,
-      quantity: parsed.data.quantity,
-      unitCost: part.unitCost,
-    },
-    include: { part: true },
-  });
+  // Guard against driving inventory negative — reject if we can't cover the
+  // requested quantity.
+  if (part.quantity < parsed.data.quantity) {
+    return NextResponse.json(
+      {
+        error: `Insufficient stock: ${part.quantity} available, ${parsed.data.quantity} requested`,
+      },
+      { status: 400 }
+    );
+  }
 
-  await prisma.part.update({
-    where: { id: parsed.data.partId },
-    data: { quantity: { decrement: parsed.data.quantity } },
-  });
+  // Create the usage and decrement stock atomically so a failure can't leave
+  // a usage row without a matching stock deduction (or vice versa).
+  const [partUsage] = await prisma.$transaction([
+    prisma.partUsage.create({
+      data: {
+        workOrderId: id,
+        partId: parsed.data.partId,
+        quantity: parsed.data.quantity,
+        unitCost: part.unitCost,
+      },
+      include: { part: true },
+    }),
+    prisma.part.update({
+      where: { id: parsed.data.partId },
+      data: { quantity: { decrement: parsed.data.quantity } },
+    }),
+  ]);
 
   logAudit({
     action: "ADD_PART",

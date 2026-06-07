@@ -29,15 +29,25 @@ export async function GET(req: NextRequest) {
 
     if (downtimeEvents.length < 2) continue;
 
+    // MTBF = mean time between failure onsets. Measure start-to-start rather
+    // than prev-end-to-next-start: overlapping/zero-duration events made the
+    // end-to-start delta negative, dragging the mean below zero. Skip any
+    // non-positive interval defensively (events not strictly ordered).
     let totalTimeBetween = 0;
+    let intervals = 0;
     for (let i = 1; i < downtimeEvents.length; i++) {
-      const prevEnd = downtimeEvents[i - 1].endedAt!;
+      const prevStart = downtimeEvents[i - 1].startedAt;
       const nextStart = downtimeEvents[i].startedAt;
-      totalTimeBetween += nextStart.getTime() - prevEnd.getTime();
+      const delta = nextStart.getTime() - prevStart.getTime();
+      if (delta <= 0) continue;
+      totalTimeBetween += delta;
+      intervals++;
     }
 
+    if (intervals === 0) continue;
+
     const mtbfHours = Math.round(
-      totalTimeBetween / (downtimeEvents.length - 1) / (1000 * 60 * 60) * 10
+      totalTimeBetween / intervals / (1000 * 60 * 60) * 10
     ) / 10;
 
     results.push({

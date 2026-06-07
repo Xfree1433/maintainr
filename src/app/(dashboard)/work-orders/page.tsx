@@ -95,7 +95,8 @@ export default function WorkOrdersPage() {
     const res = await fetch("/api/assets");
     if (res.ok) {
       const data = await res.json();
-      setAssets(data.assets ?? []);
+      // /api/assets returns a bare array; tolerate both shapes.
+      setAssets(Array.isArray(data) ? data : data.assets ?? []);
     }
   }, []);
 
@@ -103,7 +104,8 @@ export default function WorkOrdersPage() {
     const res = await fetch("/api/technicians");
     if (res.ok) {
       const data = await res.json();
-      setTechnicians(data.technicians ?? []);
+      // /api/technicians returns a bare array; tolerate both shapes.
+      setTechnicians(Array.isArray(data) ? data : data.technicians ?? []);
     }
   }, []);
 
