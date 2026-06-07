@@ -62,6 +62,11 @@ interface Part {
   quantity: number;
 }
 
+interface Technician {
+  id: string;
+  name: string;
+}
+
 export default function WorkOrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -79,6 +84,11 @@ export default function WorkOrderDetailPage() {
   const [parts, setParts] = useState<Part[]>([]);
   const [partForm, setPartForm] = useState({ partId: "", quantity: "1" });
   const [addingPart, setAddingPart] = useState(false);
+  const [addPartError, setAddPartError] = useState<string | null>(null);
+  const [technicians, setTechnicians] = useState<Technician[]>([]);
+  const [showAssign, setShowAssign] = useState(false);
+  const [assignTechId, setAssignTechId] = useState("");
+  const [assigning, setAssigning] = useState(false);
 
   const fetchWorkOrder = useCallback(async () => {
     const res = await fetch(`/api/work-orders/${id}`);
@@ -98,10 +108,20 @@ export default function WorkOrderDetailPage() {
     }
   }, []);
 
+  const fetchTechnicians = useCallback(async () => {
+    const res = await fetch("/api/technicians");
+    if (res.ok) {
+      const data = await res.json();
+      // /api/technicians returns a bare array; tolerate both shapes.
+      setTechnicians(Array.isArray(data) ? data : data.technicians ?? []);
+    }
+  }, []);
+
   useEffect(() => {
     fetchWorkOrder();
     fetchParts();
-  }, [fetchWorkOrder, fetchParts]);
+    fetchTechnicians();
+  }, [fetchWorkOrder, fetchParts, fetchTechnicians]);
 
   const handleComplete = async () => {
     setCompleting(true);
@@ -138,6 +158,7 @@ export default function WorkOrderDetailPage() {
 
   const handleAddPart = async () => {
     setAddingPart(true);
+    setAddPartError(null);
     const res = await fetch(`/api/work-orders/${id}/parts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -151,8 +172,32 @@ export default function WorkOrderDetailPage() {
       setShowAddPart(false);
       setPartForm({ partId: "", quantity: "1" });
       fetchWorkOrder();
+      fetchParts();
+    } else {
+      // Surface the API error (e.g. "Insufficient stock: 3 available, 10
+      // requested") instead of silently leaving the dialog open.
+      const data = await res.json().catch(() => ({}));
+      setAddPartError(
+        typeof data.error === "string"
+          ? data.error
+          : "Could not add part. Check the quantity and try again."
+      );
     }
     setAddingPart(false);
+  };
+
+  const handleAssignTech = async () => {
+    setAssigning(true);
+    const res = await fetch(`/api/work-orders/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ technicianId: assignTechId || null }),
+    });
+    if (res.ok) {
+      setShowAssign(false);
+      fetchWorkOrder();
+    }
+    setAssigning(false);
   };
 
   if (loading) {
@@ -266,7 +311,7 @@ export default function WorkOrderDetailPage() {
       <QuickGuide
         title="Quick Guide: Work Order Details"
         steps={[
-          "View the full work order including assigned technician, estimated vs actual hours, and linked asset.",
+          "View the full work order including assigned technician, estimated vs actual hours, and linked asset. Use Assign/Change next to Technician to set or reassign the responsible tech.",
           "Move the order through its lifecycle with Start Work, Put On Hold, Resume, and Cancel. Starting work records the start time.",
           "Add parts used during the repair using the 'Add Part' button. Part inventory is automatically decremented.",
           "Click 'Complete Work Order' when finished. You choose the resulting asset status (defaults to Operational).",
@@ -296,7 +341,20 @@ export default function WorkOrderDetailPage() {
         </div>
         <div>
           <div className="text-xs text-gray-500">Technician</div>
-          <div className="font-medium">{workOrder.technician?.name ?? "-"}</div>
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{workOrder.technician?.name ?? "-"}</span>
+            {!isClosed && (
+              <button
+                onClick={() => {
+                  setAssignTechId(workOrder.technician?.id ?? "");
+                  setShowAssign(true);
+                }}
+                className="text-xs text-orange-600 hover:underline"
+              >
+                {workOrder.technician ? "Change" : "Assign"}
+              </button>
+            )}
+          </div>
         </div>
         <div>
           <div className="text-xs text-gray-500">Due Date</div>
@@ -353,7 +411,11 @@ export default function WorkOrderDetailPage() {
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-gray-500">Parts Used</h2>
           <button
-            onClick={() => setShowAddPart(true)}
+            onClick={() => {
+              setAddPartError(null);
+              setPartForm({ partId: "", quantity: "1" });
+              setShowAddPart(true);
+            }}
             className="px-3 py-1 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700"
           >
             + Add Part
@@ -469,11 +531,19 @@ export default function WorkOrderDetailPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4">
             <h2 className="text-lg font-semibold">Add Part</h2>
+            {addPartError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {addPartError}
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium mb-1">Part *</label>
               <select
                 value={partForm.partId}
-                onChange={(e) => setPartForm({ ...partForm, partId: e.target.value })}
+                onChange={(e) => {
+                  setAddPartError(null);
+                  setPartForm({ ...partForm, partId: e.target.value });
+                }}
                 className="w-full px-3 py-2 border rounded-lg"
               >
                 <option value="">Select a part...</option>
@@ -490,13 +560,19 @@ export default function WorkOrderDetailPage() {
                 type="number"
                 min="1"
                 value={partForm.quantity}
-                onChange={(e) => setPartForm({ ...partForm, quantity: e.target.value })}
+                onChange={(e) => {
+                  setAddPartError(null);
+                  setPartForm({ ...partForm, quantity: e.target.value });
+                }}
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <button
-                onClick={() => setShowAddPart(false)}
+                onClick={() => {
+                  setShowAddPart(false);
+                  setAddPartError(null);
+                }}
                 className="px-4 py-2 border rounded-lg hover:bg-gray-50"
               >
                 Cancel
@@ -507,6 +583,45 @@ export default function WorkOrderDetailPage() {
                 className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
               >
                 {addingPart ? "Adding..." : "Add Part"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Technician Dialog */}
+      {showAssign && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4">
+            <h2 className="text-lg font-semibold">Assign Technician</h2>
+            <div>
+              <label className="block text-sm font-medium mb-1">Technician</label>
+              <select
+                value={assignTechId}
+                onChange={(e) => setAssignTechId(e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="">Unassigned</option>
+                {technicians.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={() => setShowAssign(false)}
+                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAssignTech}
+                disabled={assigning}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
+              >
+                {assigning ? "Saving..." : "Save"}
               </button>
             </div>
           </div>

@@ -20,7 +20,14 @@ export const assetCreateSchema = z.object({
   specifications: z.string().optional(),
 });
 
-export const assetUpdateSchema = assetCreateSchema.partial();
+// `.partial()` keeps each create-time `.default(...)`, so a partial update that
+// omits a defaulted field would re-inject the default into the parsed output and
+// silently clobber the stored value (Prisma writes whatever is present). Override
+// the defaulted fields with default-less optionals so "omitted" means "untouched".
+export const assetUpdateSchema = assetCreateSchema.partial().extend({
+  status: z.enum(["OPERATIONAL", "DEGRADED", "DOWN", "MAINTENANCE", "DECOMMISSIONED"]).optional(),
+  criticality: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]).optional(),
+});
 
 // ─── Work Orders ─────────────────────────────────────────────────
 
@@ -30,7 +37,7 @@ export const workOrderCreateSchema = z.object({
   type: z.enum(["CORRECTIVE", "PREVENTIVE", "PREDICTIVE", "INSPECTION", "EMERGENCY"]),
   priority: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]).default("MEDIUM"),
   assetId: z.string().min(1),
-  technicianId: z.string().optional(),
+  technicianId: z.string().nullable().optional(),
   scheduleId: z.string().optional(),
   alertId: z.string().optional(),
   estimatedHours: z.coerce.number().min(0).optional(),
@@ -41,6 +48,10 @@ export const workOrderCreateSchema = z.object({
 export const workOrderUpdateSchema = workOrderCreateSchema.partial().extend({
   status: z.enum(["OPEN", "IN_PROGRESS", "ON_HOLD", "COMPLETED", "CANCELLED"]).optional(),
   actualHours: z.coerce.number().min(0).optional(),
+  // Strip the create-time `.default("MEDIUM")`: without this, assigning a
+  // technician or changing status (any partial PUT that omits priority) would
+  // reset priority back to MEDIUM.
+  priority: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]).optional(),
 });
 
 // Completing a work order. `assetStatus` is an optional explicit choice of the
@@ -69,7 +80,11 @@ export const scheduleCreateSchema = z.object({
   enabled: z.boolean().default(true),
 });
 
-export const scheduleUpdateSchema = scheduleCreateSchema.partial();
+// Strip the `enabled` default(true) so a partial update doesn't silently
+// re-enable a disabled schedule.
+export const scheduleUpdateSchema = scheduleCreateSchema.partial().extend({
+  enabled: z.boolean().optional(),
+});
 
 // ─── Parts ───────────────────────────────────────────────────────
 
@@ -86,7 +101,12 @@ export const partCreateSchema = z.object({
   leadTimeDays: z.coerce.number().int().min(0).optional(),
 });
 
-export const partUpdateSchema = partCreateSchema.partial();
+// Strip the `quantity`/`minStock` default(0) so editing e.g. a part's name
+// doesn't silently zero out its inventory.
+export const partUpdateSchema = partCreateSchema.partial().extend({
+  quantity: z.coerce.number().int().min(0).optional(),
+  minStock: z.coerce.number().int().min(0).optional(),
+});
 
 // ─── Technicians ─────────────────────────────────────────────────
 
@@ -101,7 +121,11 @@ export const technicianCreateSchema = z.object({
   hourlyRate: z.coerce.number().min(0).optional(),
 });
 
-export const technicianUpdateSchema = technicianCreateSchema.partial();
+// Strip the `status` default(AVAILABLE) so a partial update doesn't reset a
+// technician's status.
+export const technicianUpdateSchema = technicianCreateSchema.partial().extend({
+  status: z.enum(["AVAILABLE", "ON_JOB", "OFF_SHIFT", "ON_LEAVE"]).optional(),
+});
 
 // ─── Downtime ────────────────────────────────────────────────────
 
