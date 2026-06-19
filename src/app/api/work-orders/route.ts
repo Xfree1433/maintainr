@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { workOrderCreateSchema } from "@/lib/validators";
 import { captureServer } from "@/lib/posthog";
+import { assetInOrg, technicianInOrg, scheduleInOrg, alertInOrg } from "@/lib/ownership";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -55,6 +56,22 @@ export async function POST(req: NextRequest) {
   const parsed = workOrderCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  // Child FKs from the body must belong to the caller's org — otherwise a
+  // caller could attach a work order to another tenant's asset/technician/
+  // schedule/alert by guessing an id.
+  if (!(await assetInOrg(parsed.data.assetId, orgId))) {
+    return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+  }
+  if (!(await technicianInOrg(parsed.data.technicianId, orgId))) {
+    return NextResponse.json({ error: "Technician not found" }, { status: 404 });
+  }
+  if (!(await scheduleInOrg(parsed.data.scheduleId, orgId))) {
+    return NextResponse.json({ error: "Schedule not found" }, { status: 404 });
+  }
+  if (!(await alertInOrg(parsed.data.alertId, orgId))) {
+    return NextResponse.json({ error: "Alert not found" }, { status: 404 });
   }
 
   const count = await prisma.maintenanceWorkOrder.count({ where: { organizationId: orgId } });

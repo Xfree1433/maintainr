@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { scheduleUpdateSchema } from "@/lib/validators";
+import { assetInOrg } from "@/lib/ownership";
 
 export async function GET(
   req: NextRequest,
@@ -49,6 +50,11 @@ export async function PUT(
   const parsed = scheduleUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  // A re-pointed asset must stay within the caller's org.
+  if (!(await assetInOrg(parsed.data.assetId, orgId))) {
+    return NextResponse.json({ error: "Asset not found" }, { status: 404 });
   }
 
   const schedule = await prisma.maintenanceSchedule.update({

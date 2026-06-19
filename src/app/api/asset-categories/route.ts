@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { categoryInOrg } from "@/lib/ownership";
 import { z } from "zod";
 
 const categoryCreateSchema = z.object({
@@ -36,6 +37,12 @@ export async function POST(req: NextRequest) {
   const parsed = categoryCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  // A parent category must belong to the caller's org — otherwise a caller
+  // could nest their category under another tenant's hierarchy.
+  if (!(await categoryInOrg(parsed.data.parentId, orgId))) {
+    return NextResponse.json({ error: "Parent category not found" }, { status: 404 });
   }
 
   const category = await prisma.assetCategory.create({

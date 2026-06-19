@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { workOrderUpdateSchema } from "@/lib/validators";
+import { assetInOrg, technicianInOrg, scheduleInOrg, alertInOrg } from "@/lib/ownership";
 
 export async function GET(
   req: NextRequest,
@@ -53,6 +54,21 @@ export async function PUT(
   const parsed = workOrderUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  // A partial update can re-point any of these FKs — each must stay within the
+  // caller's org. Omitted (undefined) FKs pass the guard untouched.
+  if (!(await assetInOrg(parsed.data.assetId, orgId))) {
+    return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+  }
+  if (!(await technicianInOrg(parsed.data.technicianId, orgId))) {
+    return NextResponse.json({ error: "Technician not found" }, { status: 404 });
+  }
+  if (!(await scheduleInOrg(parsed.data.scheduleId, orgId))) {
+    return NextResponse.json({ error: "Schedule not found" }, { status: 404 });
+  }
+  if (!(await alertInOrg(parsed.data.alertId, orgId))) {
+    return NextResponse.json({ error: "Alert not found" }, { status: 404 });
   }
 
   const data: Record<string, unknown> = { ...parsed.data };

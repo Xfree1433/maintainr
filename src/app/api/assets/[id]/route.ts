@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { assetUpdateSchema } from "@/lib/validators";
+import { facilityInOrg, categoryInOrg } from "@/lib/ownership";
 
 export async function GET(
   req: NextRequest,
@@ -65,6 +66,14 @@ export async function PUT(
   const parsed = assetUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  // A re-pointed facility / category must stay within the caller's org.
+  if (!(await facilityInOrg(parsed.data.facilityId, orgId))) {
+    return NextResponse.json({ error: "Facility not found" }, { status: 404 });
+  }
+  if (!(await categoryInOrg(parsed.data.categoryId, orgId))) {
+    return NextResponse.json({ error: "Category not found" }, { status: 404 });
   }
 
   const asset = await prisma.asset.update({

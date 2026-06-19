@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { scheduleCreateSchema } from "@/lib/validators";
+import { assetInOrg } from "@/lib/ownership";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -47,6 +48,11 @@ export async function POST(req: NextRequest) {
   const parsed = scheduleCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  // The asset a schedule targets must belong to the caller's org.
+  if (!(await assetInOrg(parsed.data.assetId, orgId))) {
+    return NextResponse.json({ error: "Asset not found" }, { status: 404 });
   }
 
   const schedule = await prisma.maintenanceSchedule.create({
