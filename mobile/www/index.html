@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>MAINTAINR</title>
+  <style>
+    :root { color-scheme: light; }
+    html, body {
+      margin: 0; height: 100%;
+      background: #ffffff; color: #111827;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .wrap {
+      height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 24px; box-sizing: border-box;
+    }
+    .brand { font-size: 30px; font-weight: 800; letter-spacing: 3px; margin-bottom: 8px; }
+    .brand .accent { color: #2563eb; }
+    .tag { color: #6b7280; font-size: 13px; letter-spacing: 2px; margin-bottom: 28px; }
+    .spinner {
+      width: 34px; height: 34px; border: 3px solid #e5e7eb;
+      border-top-color: #2563eb; border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .offline { display: none; }
+    button {
+      margin-top: 20px; padding: 12px 24px; font-size: 15px;
+      background: #2563eb; color: #fff; border: 0; border-radius: 6px; font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">MAINTAIN<span class="accent">R</span></div>
+    <div class="tag">MAINTENANCE MANAGEMENT</div>
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+    <div id="offline" class="offline">
+      <p>You're offline. MAINTAINR needs a connection to load.</p>
+      <button onclick="location.reload()">Retry</button>
+    </div>
+  </div>
+  <script>
+    // When Capacitor's server.url is reachable it takes over immediately and
+    // this page is never shown. This screen is the pre-load splash and the
+    // fallback rendered when the remote navigation fails (offline).
+    if (navigator && navigator.onLine === false) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('offline').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
