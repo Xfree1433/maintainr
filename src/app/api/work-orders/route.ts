@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { workOrderCreateSchema } from "@/lib/validators";
 import { captureServer } from "@/lib/posthog";
+import { report as storeReport } from "@/lib/store-activity";
 import { assetInOrg, technicianInOrg, scheduleInOrg, alertInOrg } from "@/lib/ownership";
 
 export async function GET(req: NextRequest) {
@@ -103,6 +104,10 @@ export async function POST(req: NextRequest) {
     { action: "work_order_created" },
     { account: orgId, awaitFlush: false }
   );
+  // Deliberately session.user.email, not the actorId above: that falls
+  // back to a user id, and the store matches customers on email alone,
+  // so an id would silently never match a subscription.
+  void storeReport(session.user.email, "action", "work_order_created");
 
   return NextResponse.json({ workOrder }, { status: 201 });
 }

@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { authConfig } from "@/lib/auth.config";
 import { captureServer } from "@/lib/posthog";
+import { report as storeReport } from "@/lib/store-activity";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -82,6 +83,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ user }) {
       if (user?.email) {
         await captureServer("app_login", user.email, {});
+        void storeReport(user.email, "login"); // store lifecycle: last_login_at
       }
     },
   },
