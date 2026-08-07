@@ -9,3 +9,6 @@ __pycache__/
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
+
+# Built by `npm run build:bootstrap-admin` (Docker builder stage) — 5MB, not source
+prisma/bootstrap-admin.mjs

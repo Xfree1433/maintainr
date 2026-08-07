@@ -14,6 +14,15 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npx prisma generate
+# Pre-compile the admin bootstrap into a self-contained ESM bundle.
+# The runner is a Next.js *standalone* image: it has no tsx, no devDependencies,
+# and the generated Prisma client is TypeScript-only (provider = "prisma-client",
+# 30 .ts files / 0 .js), so `npx tsx prisma/bootstrap-admin.ts` cannot run there.
+# Bundling here — where the full toolchain exists — inlines the client, the pg
+# adapter, bcryptjs and dotenv, leaving only `pg` external (it IS in the
+# standalone node_modules). Must be ESM: the generated client reads
+# `import.meta.url`, which is empty under CJS.
+RUN npm run build:bootstrap-admin
 RUN npm run build
 
 # --- Runner ---

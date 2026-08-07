@@ -13,7 +13,9 @@
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
     "db:reset": "npx prisma migrate reset",
-    "bootstrap-admin": "npx tsx prisma/bootstrap-admin.ts"
+    "bootstrap-admin": "npx tsx prisma/bootstrap-admin.ts",
+    "build:bootstrap-admin": "esbuild prisma/bootstrap-admin.ts --bundle --platform=node --target=node20 --format=esm --external:pg --external:pg-native --external:pg-cloudflare --banner:js='import{createRequire as __pf9cr}from\"node:module\";const require=__pf9cr(import.meta.url);' --outfile=prisma/bootstrap-admin.mjs",
+    "bootstrap-admin:prod": "node prisma/bootstrap-admin.mjs"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -55,6 +57,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^17.3.1",
+    "esbuild": "^0.28.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "prisma": "^7.4.2",

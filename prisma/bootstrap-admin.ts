@@ -4,8 +4,15 @@
  * Reads PF9_ADMIN_EMAIL / PF9_ADMIN_PASSWORD / PF9_ADMIN_NAME from env and
  * upserts a User + Organization + Membership(role=OWNER). Safe to re-run.
  *
- * Run after `prisma migrate deploy` on first deploy:
+ * Local / dev (TypeScript, needs devDependencies):
  *   PF9_ADMIN_EMAIL=... PF9_ADMIN_PASSWORD=... npm run bootstrap-admin
+ *
+ * Deployed container — use the PRE-BUILT BUNDLE, not this file. The standalone
+ * runner image has no tsx and no devDependencies, and the generated Prisma client
+ * is TypeScript-only, so `npm run bootstrap-admin` fails there. The Docker builder
+ * stage compiles this into `prisma/bootstrap-admin.mjs`; run that instead:
+ *   docker exec -e PF9_ADMIN_EMAIL=... -e PF9_ADMIN_PASSWORD=... \
+ *     pf9-apps-maintainr-1 sh -c 'cd /app && npm run bootstrap-admin:prod'
  */
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
