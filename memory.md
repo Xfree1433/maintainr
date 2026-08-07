@@ -14,6 +14,32 @@ A full manual functional test pass (T0–T11) surfaced 12 bugs + 4 gaps. All gen
 been implemented, deployed, and committed** (`f1503d1`). No known bugs or gaps
 remain. MAINTAINR is at the same "completely tested" bar as FLOWTRACK.
 
+### Run-2 / Run-3 re-test fixes — commit `e4f06bf` (2026-06-07)
+
+Three more functional-test passes (Runs 1→2→3) drove the pass rate to 33/35 and
+surfaced a small set of additional items. All real defects now fixed, deployed,
+live-verified, and committed:
+
+| Item | Sev | What it was | Fix |
+|---|---|---|---|
+| Assign Technician UI | P1 | WO detail had only "Complete" — assigning a tech needed a manual API call. | Added an **Assign/Change** control + dialog (tech dropdown, "Unassigned" option) next to the Technician field on `work-orders/[id]/page.tsx`; `handleAssignTech` PUTs `{technicianId}`. Made `workOrderCreateSchema.technicianId` `.nullable().optional()` so unassign (null) doesn't 400. |
+| Add-Part silent failure | P2 | Adding qty>stock failed with no UI feedback (dialog just stayed open). | Add Part dialog now shows the API error in a red banner (e.g. "Insufficient stock: 3 available, 10 requested"); refreshes parts; clears error on edit/cancel. |
+| **Partial-update default clobber** | P2 | After assigning a tech, the WO **priority reset to MEDIUM**. Root cause: **Zod `.partial()` does NOT strip a field's `.default(...)`** — so `*UpdateSchema = *CreateSchema.partial()` re-injects the create default into `parsed.data` on any partial PUT/PATCH that omits the field, and routes do `data: parsed.data` → silent clobber. **Systemic**, not just WOs. | Each update schema now `.extend()`-overrides its defaulted fields with default-less optionals so "omitted = untouched": **WO** priority; **asset** status+criticality; **part** quantity+minStock (this one was an *inventory wipe* — editing a part name zeroed stock); **schedule** enabled; **technician** status. Verified with isolated Zod-4 repros. |
+
+**Live-verified the fix end-to-end:** created WO-00010 as HIGH → assigned John
+Smith via the new UI → API confirmed `{priority:"HIGH", technician:"John Smith"}`
+(pre-fix this returned MEDIUM). Test WO deleted afterward.
+
+**Two carried "bugs" are NOT app defects (confirmed by real-UI live tests):**
+- **Planned-downtime flag "not persisting"** is a **test-harness artifact**. The
+  checkbox is a controlled React component (`checked={form.planned} onChange=...`);
+  a harness that sets `.checked` via raw JS doesn't fire React's `onChange`, so
+  state stays false. Driving it with a real click persists correctly — live test
+  showed `Planned? = Yes` and the Planned KPI 0→1. Same class as the old
+  "priority not saved on create" artifact (also re-confirmed working live).
+- **`/demo` 404** is **by design** — prod-gated behind `ENABLE_DEMO=true`
+  (the `65f4c8f` security fix). Not a bug.
+
 ### Fixed & deployed — commit `d878d49`
 
 | Item | What it was | Fix |
