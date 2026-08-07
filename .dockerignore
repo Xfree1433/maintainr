@@ -1,3 +1,33 @@
+# Keep .env* out of the build context.
+#
+# The Dockerfile does a bare `COPY . .`, so anything sitting in the server-side
+# build dir /opt/pf9-apps/maintainr/ gets baked into the image. That directory
+# holds a stale .env from the original manual setup (dated 2026-03-14), and
+# pf9-deploy's EXCLUDES_NODE lists `.env` -- so the deploy neither overwrites it
+# nor deletes it. It just sits there, invisible to git and to every deploy,
+# getting copied into image after image. It was: /app/.env with dev values for
+# AUTH_SECRET, AUTH_URL, DATABASE_URL, NEXTAUTH_URL and REDIS_URL.
+#
+# Note the leak is NOT the developer's laptop .env travelling to the server --
+# pf9-deploy excludes that. It is old server-side residue. Deleting the residue
+# would fix today; this file is what stops it recurring.
+#
+# It did no damage here only by luck. The Next standalone server.js does not
+# load .env at runtime, and compose already sets every one of those keys except
+# REDIS_URL -- whose only consumer, src/lib/redis.ts, is dead code that nothing
+# imports. The moment someone adds `import "dotenv/config"` to a server path,
+# wires up that redis module, or adds a secret to .env that compose omits, the
+# stale dev value silently wins. dotenv does not override an already-set
+# process.env, so the damage is always confined to exactly the keys compose
+# leaves out -- which is what makes it so quiet.
+#
+# That is not hypothetical: the identical setup in MARKUPR broke every realtime
+# token and every webhook signature while both containers reported healthy.
+# Keep .env* excluded. Do not "fix" a missing secret by re-adding it here.
+.env
+.env.*
+.env.local
+
 node_modules
 .next
 .git
