@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -11,7 +12,41 @@ const registerSchema = z.object({
   organizationName: z.string().min(2),
 });
 
+function publicRegistrationAllowed(): boolean {
+  if (process.env.ALLOW_PUBLIC_REGISTRATION === "true") return true;
+  return process.env.NODE_ENV !== "production";
+}
+
+/**
+ * Security audit 2026-10-26: this route had no gate, so anyone could POST here
+ * and get a paid OWNER account, or pre-register a buyer's email so the real
+ * purchase hit 409. Same contract as FLOWTRACK: in production only the PF9
+ * store, presenting the shared secret, can register. Fails closed: no
+ * PROVISION_SECRET configured means no bypass exists.
+ */
+function isStoreProvisioning(req: Request): boolean {
+  const secret = process.env.PROVISION_SECRET;
+  if (!secret) return false;
+  const presented = req.headers.get("x-pf9-provision-secret");
+  if (!presented) return false;
+  const a = Buffer.from(presented);
+  const b = Buffer.from(secret);
+  // timingSafeEqual throws on length mismatch, which would itself leak length.
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
+
 export async function POST(req: Request) {
+  if (!publicRegistrationAllowed() && !isStoreProvisioning(req)) {
+    return NextResponse.json(
+      {
+        error:
+          "Registration is by subscription only. Contact sales to get started.",
+      },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
