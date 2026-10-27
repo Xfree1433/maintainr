@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { authConfig } from "@/lib/auth.config";
+import { clientIp, loginLimiter } from "@/lib/login-rate-limit";
 import { captureServer } from "@/lib/posthog";
 import { report as storeReport } from "@/lib/store-activity";
 
@@ -24,9 +25,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        // Brute-force limit: refuse before touching the password once this
+        // IP+email or IP is over its failure budget (lib/login-rate-limit).
+        const ip = clientIp(request?.headers);
+        const email = parsed.data.email;
+        if (!loginLimiter.attempt(ip, email)) return null;
 
         const user = await prisma.user.findUnique({
           where: { email: parsed.data.email },
@@ -40,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         );
 
         if (!isValid) return null;
+        loginLimiter.succeeded(ip, email);
 
         return {
           id: user.id,

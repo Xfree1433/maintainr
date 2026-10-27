@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { DemoClient } from "./DemoClient";
+import { demoCredentials } from "./config";
+
+// Read ENABLE_DEMO at request time; a static prerender would bake in the
+// build machine's env.
+export const dynamic = "force-dynamic";
 
 export default function DemoPage() {
-  if (
-    process.env.NODE_ENV === "production" &&
-    process.env.ENABLE_DEMO !== "true"
-  ) {
-    notFound();
-  }
+  if (!demoCredentials()) notFound();
   return <DemoClient />;
 }

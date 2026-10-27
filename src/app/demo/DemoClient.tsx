@@ -1,29 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { startDemo } from "./actions";
 
 export function DemoClient() {
-  const router = useRouter();
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function autoLogin() {
-      const result = await signIn("credentials", {
-        email: "mark@acme-mfg.com",
-        password: "password123",
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError("Demo login failed. Please run the database seed first.");
-      } else {
-        router.push("/dashboard");
-      }
-    }
-    autoLogin();
-  }, [router]);
+    startDemo()
+      .then((result) => {
+        if (result.ok) window.location.href = "/dashboard";
+        else setError("Demo login failed. Please try again later.");
+      })
+      .catch(() => setError("Demo login failed. Please try again later."));
+  }, []);
 
   if (error) {
     return (
