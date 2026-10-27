@@ -65,13 +65,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.organizationId = membership.organizationId;
           token.organizationName = membership.organization.name;
           token.role = membership.role;
+        } else {
+          // Membership gone: drop the stale org claim instead of keeping it.
+          delete token.organizationId;
+          delete token.organizationName;
+          delete token.role;
         }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        // No org => no user id. Every API route gates on session.user.id, and
+        // Prisma drops `organizationId: undefined` from where-filters (matching
+        // every tenant), so an org-less session must never look authenticated.
+        if (token.organizationId) {
+          session.user.id = token.id as string;
+        }
         (session as any).organizationId = token.organizationId as string;
         (session as any).organizationName = token.organizationName as string;
         (session as any).role = token.role as string;
