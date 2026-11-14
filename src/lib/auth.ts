@@ -8,6 +8,10 @@ import { authConfig } from "@/lib/auth.config";
 import { clientIp, loginLimiter } from "@/lib/login-rate-limit";
 import { captureServer } from "@/lib/posthog";
 import { report as storeReport } from "@/lib/store-activity";
+import {
+  chooseActiveMembership,
+  signInBlockedByBillingLock,
+} from "@/lib/billing-lock";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -49,6 +53,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!isValid) return null;
         loginLimiter.succeeded(ip, email);
 
+        // Billing lock (store plan route, 2026-11-14): a user whose
+        // organizations are ALL locked gets the normal "invalid" error rather
+        // than a session with no organization. No memberships at all: as before.
+        const memberships = await prisma.membership.findMany({
+          where: { userId: user.id },
+          select: { organization: { select: { billingLockedAt: true } } },
+        });
+        if (signInBlockedByBillingLock(memberships)) return null;
+
         return {
           id: user.id,
           email: user.email,
@@ -63,12 +76,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id;
       }
+      // Re-read on every request. Billing-locked organizations are skipped
+      // (lib/billing-lock): a member of a locked org loses it on their next
+      // request; a member of another, unlocked org keeps that one.
       if (token.id) {
-        const membership = await prisma.membership.findFirst({
+        const memberships = await prisma.membership.findMany({
           where: { userId: token.id as string },
-          include: { organization: true },
+          include: { organization: { select: { name: true, billingLockedAt: true } } },
           orderBy: { createdAt: "desc" },
         });
+        const membership = chooseActiveMembership(memberships);
         if (membership) {
           token.organizationId = membership.organizationId;
           token.organizationName = membership.organization.name;

@@ -16,6 +16,9 @@ model Organization {
   plan      Plan     @default(STARTER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  /// Set by the PF9 store's plan route (POST /api/auth/plan) when the
+  /// subscription ends; null = not locked. Checked in lib/auth.ts.
+  billingLockedAt DateTime?
 
   members          Membership[]
   facilities       Facility[]

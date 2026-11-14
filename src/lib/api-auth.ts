@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createHash } from "crypto";
+import { isBillingLocked } from "@/lib/billing-lock";
 
 function hashKey(key: string) {
   return createHash("sha256").update(key).digest("hex");
@@ -26,11 +27,24 @@ export async function authenticateApiKey(
 
   const apiKey = await prisma.apiKey.findUnique({
     where: { keyHash: hashed },
-    select: { id: true, organizationId: true },
+    select: {
+      id: true,
+      organizationId: true,
+      organization: { select: { billingLockedAt: true } },
+    },
   });
 
   if (!apiKey) {
     return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+  }
+
+  // Billing lock (store plan route, 2026-11-14): a locked organization's keys
+  // stop working too, and start again on unlock.
+  if (isBillingLocked(apiKey.organization)) {
+    return NextResponse.json(
+      { error: "This organization's subscription is not active" },
+      { status: 403 }
+    );
   }
 
   prisma.apiKey.update({

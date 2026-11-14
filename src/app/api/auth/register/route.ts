@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/prisma";
+import { isStoreProvisioning } from "@/lib/provision-secret";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { captureServer, identifyServer } from "@/lib/posthog";
@@ -23,19 +23,10 @@ function publicRegistrationAllowed(): boolean {
  * purchase hit 409. Same contract as FLOWTRACK: in production only the PF9
  * store, presenting the shared secret, can register. Fails closed: no
  * PROVISION_SECRET configured means no bypass exists.
+ *
+ * The comparison is isStoreProvisioning() in lib/provision-secret.ts, shared
+ * with the store's plan route (POST /api/auth/plan).
  */
-function isStoreProvisioning(req: Request): boolean {
-  const secret = process.env.PROVISION_SECRET;
-  if (!secret) return false;
-  const presented = req.headers.get("x-pf9-provision-secret");
-  if (!presented) return false;
-  const a = Buffer.from(presented);
-  const b = Buffer.from(secret);
-  // timingSafeEqual throws on length mismatch, which would itself leak length.
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
-}
-
 export async function POST(req: Request) {
   if (!publicRegistrationAllowed() && !isStoreProvisioning(req)) {
     return NextResponse.json(
