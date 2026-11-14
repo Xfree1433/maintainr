@@ -1,5 +1,27 @@
 import { z } from "zod";
 
+// ─── Paging ──────────────────────────────────────────────────────
+
+/**
+ * take/skip from a query string. Missing or empty means the default; anything
+ * that is not a whole number returns null (the caller answers 400). take is
+ * clamped to 1..100, skip to >= 0.
+ */
+export function parseTakeSkip(
+  takeRaw: string | null,
+  skipRaw: string | null,
+  defaultTake = 50
+): { take: number; skip: number } | null {
+  const whole = (raw: string | null, fallback: number): number | null => {
+    if (raw === null || raw.trim() === "") return fallback;
+    return /^-?\d+$/.test(raw.trim()) ? Number(raw.trim()) : null;
+  };
+  const take = whole(takeRaw, defaultTake);
+  const skip = whole(skipRaw, 0);
+  if (take === null || skip === null) return null;
+  return { take: Math.min(100, Math.max(1, take)), skip: Math.max(0, skip) };
+}
+
 // ─── Assets ──────────────────────────────────────────────────────
 
 export const assetCreateSchema = z.object({

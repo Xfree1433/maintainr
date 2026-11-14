@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { parseTakeSkip } from "@/lib/validators";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -12,8 +13,11 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const entityType = searchParams.get("entityType") ?? "";
   const action = searchParams.get("action") ?? "";
-  const take = parseInt(searchParams.get("take") ?? "50", 10);
-  const skip = parseInt(searchParams.get("skip") ?? "0", 10);
+  const paging = parseTakeSkip(searchParams.get("take"), searchParams.get("skip"));
+  if (!paging) {
+    return NextResponse.json({ error: "take and skip must be whole numbers" }, { status: 400 });
+  }
+  const { take, skip } = paging;
 
   const where: Record<string, unknown> = { organizationId: orgId };
 

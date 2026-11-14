@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { maskConnector } from "@/lib/connector-secrets";
 import { z } from "zod";
 
 const connectorCreateSchema = z.object({
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json({ connectors });
+  return NextResponse.json({ connectors: connectors.map(maskConnector) });
 }
 
 export async function POST(req: NextRequest) {
@@ -46,6 +47,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const orgId = (session as any).organizationId as string;
+
+  // Operators can't delete or reconfigure (same membership-role check as profile).
+  const membership = await prisma.membership.findFirst({
+    where: { userId: session.user.id, organizationId: orgId },
+    select: { role: true },
+  });
+  if (!membership || membership.role === "OPERATOR") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const body = await req.json();
   const parsed = connectorCreateSchema.safeParse(body);
@@ -69,5 +79,5 @@ export async function POST(req: NextRequest) {
     metadata: { type: connector.type, direction: connector.direction },
   });
 
-  return NextResponse.json({ connector }, { status: 201 });
+  return NextResponse.json({ connector: maskConnector(connector) }, { status: 201 });
 }

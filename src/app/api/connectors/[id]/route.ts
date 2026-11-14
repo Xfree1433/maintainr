@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { maskConnector, restoreMaskedSecrets } from "@/lib/connector-secrets";
 import { z } from "zod";
 
 const connectorUpdateSchema = z.object({
@@ -39,7 +40,7 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ connector });
+  return NextResponse.json({ connector: maskConnector(connector) });
 }
 
 export async function PUT(
@@ -52,6 +53,15 @@ export async function PUT(
   }
   const orgId = (session as any).organizationId as string;
   const { id } = await params;
+
+  // Operators can't delete or reconfigure (same membership-role check as profile).
+  const membership = await prisma.membership.findFirst({
+    where: { userId: session.user.id, organizationId: orgId },
+    select: { role: true },
+  });
+  if (!membership || membership.role === "OPERATOR") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const existing = await prisma.connector.findFirst({
     where: { id, organizationId: orgId },
@@ -66,9 +76,15 @@ export async function PUT(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
+  // A secret sent back still masked (round-tripped from a read) keeps its stored value.
+  const data = { ...parsed.data };
+  if (data.config !== undefined) {
+    data.config = restoreMaskedSecrets(data.config, existing.config);
+  }
+
   const connector = await prisma.connector.update({
     where: { id },
-    data: parsed.data,
+    data,
   });
 
   logAudit({
@@ -79,7 +95,7 @@ export async function PUT(
     organizationId: orgId,
   });
 
-  return NextResponse.json({ connector });
+  return NextResponse.json({ connector: maskConnector(connector) });
 }
 
 export async function DELETE(
@@ -92,6 +108,15 @@ export async function DELETE(
   }
   const orgId = (session as any).organizationId as string;
   const { id } = await params;
+
+  // Operators can't delete or reconfigure (same membership-role check as profile).
+  const membership = await prisma.membership.findFirst({
+    where: { userId: session.user.id, organizationId: orgId },
+    select: { role: true },
+  });
+  if (!membership || membership.role === "OPERATOR") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const existing = await prisma.connector.findFirst({
     where: { id, organizationId: orgId },

@@ -73,6 +73,15 @@ export async function DELETE(
   const orgId = (session as any).organizationId as string;
   const { id } = await params;
 
+  // Operators can't delete or reconfigure (same membership-role check as profile).
+  const membership = await prisma.membership.findFirst({
+    where: { userId: session.user.id, organizationId: orgId },
+    select: { role: true },
+  });
+  if (!membership || membership.role === "OPERATOR") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const existing = await prisma.technician.findUnique({ where: { id } });
   if (!existing || existing.organizationId !== orgId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
