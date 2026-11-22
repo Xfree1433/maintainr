@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     title: "Maintainr",
   },
   icons: {
+    // An explicit `icons` block replaces Next's file-based icons, so the tab
+    // icon has to be named here too (src/app/icon.svg alone was ignored).
+    icon: "/icons/icon-192.svg",
     apple: "/icons/icon-192.svg",
   },
 };
