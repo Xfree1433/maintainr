@@ -17,6 +17,7 @@ import {
   Package,
 } from "lucide-react";
 import { QuickGuide } from "@/components/ui/quick-guide";
+import { formatDay } from "@/lib/dates";
 
 interface DashboardStats {
   openWorkOrders: number;
@@ -97,11 +98,7 @@ export default function DashboardPage() {
   ];
 
   const trendData = stats.workOrderTrend.map((d) => ({
-    date: new Date(d.date).toLocaleDateString(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    }),
+    date: formatDay(d.date, { weekday: "short", month: "short", day: "numeric" }),
     count: d.count,
   }));
 

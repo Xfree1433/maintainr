@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { QuickGuide } from "@/components/ui/quick-guide";
+import { formatDay } from "@/lib/dates";
 
 const STATUS_BADGES: Record<string, string> = {
   OPEN: "bg-blue-100 text-blue-800",
@@ -360,7 +361,7 @@ export default function WorkOrderDetailPage() {
           <div className="text-xs text-gray-500">Due Date</div>
           <div className="font-medium">
             {workOrder.dueDate
-              ? new Date(workOrder.dueDate).toLocaleDateString()
+              ? formatDay(workOrder.dueDate)
               : "-"}
           </div>
         </div>

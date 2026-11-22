@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { QuickGuide } from "@/components/ui/quick-guide";
+import { formatDay, isPastDay } from "@/lib/dates";
 
 interface Asset {
   id: string;
@@ -214,11 +215,11 @@ export default function AssetDetailPage() {
               <DetailItem label="Serial Number" value={asset.serialNumber} />
               <DetailItem
                 label="Install Date"
-                value={asset.installDate ? new Date(asset.installDate).toLocaleDateString() : undefined}
+                value={asset.installDate ? formatDay(asset.installDate) : undefined}
               />
               <DetailItem
                 label="Warranty Expiry"
-                value={asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toLocaleDateString() : undefined}
+                value={asset.warrantyExpiry ? formatDay(asset.warrantyExpiry) : undefined}
               />
               <DetailItem label="Location" value={asset.location} />
               <DetailItem
@@ -360,7 +361,7 @@ export default function AssetDetailPage() {
                   </tr>
                 ) : (
                   asset.schedules.map((s) => {
-                    const overdue = new Date(s.nextDue) < new Date();
+                    const overdue = isPastDay(s.nextDue);
                     return (
                       <tr key={s.id} className={overdue ? "bg-red-50 dark:bg-red-900/10" : "hover:bg-gray-50 dark:hover:bg-gray-800"}>
                         <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{s.name}</td>
@@ -368,7 +369,7 @@ export default function AssetDetailPage() {
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{s.intervalDays}</td>
                         <td className="px-4 py-3 text-sm">
                           <span className={overdue ? "text-red-600 font-medium" : "text-gray-900 dark:text-gray-100"}>
-                            {new Date(s.nextDue).toLocaleDateString()}
+                            {formatDay(s.nextDue)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">

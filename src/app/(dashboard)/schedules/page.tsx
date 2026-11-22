@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { QuickGuide } from "@/components/ui/quick-guide";
+import { formatDay, isPastDay } from "@/lib/dates";
 
 interface Schedule {
   id: string;
@@ -193,7 +194,7 @@ export default function SchedulesPage() {
     setGenerating(false);
   };
 
-  const isOverdue = (nextDue: string) => new Date(nextDue) < new Date();
+  const isOverdue = (nextDue: string) => isPastDay(nextDue);
 
   return (
     <div className="p-6 space-y-6">
@@ -298,7 +299,7 @@ export default function SchedulesPage() {
                   <td className="p-3">{s.intervalDays}</td>
                   <td className="p-3">
                     <span className={isOverdue(s.nextDue) ? "text-red-600 font-medium" : ""}>
-                      {new Date(s.nextDue).toLocaleDateString()}
+                      {formatDay(s.nextDue)}
                     </span>
                   </td>
                   <td className="p-3">

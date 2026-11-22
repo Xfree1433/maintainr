@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { QuickGuide } from "@/components/ui/quick-guide";
+import { formatDay } from "@/lib/dates";
 
 const TYPE_BADGES: Record<string, string> = {
   CORRECTIVE: "bg-red-100 text-red-800",
@@ -287,7 +288,7 @@ export default function WorkOrdersPage() {
                   <td className="p-3">{wo.technician?.name ?? "-"}</td>
                   <td className="p-3">
                     {wo.dueDate
-                      ? new Date(wo.dueDate).toLocaleDateString()
+                      ? formatDay(wo.dueDate)
                       : "-"}
                   </td>
                   <td className="p-3">

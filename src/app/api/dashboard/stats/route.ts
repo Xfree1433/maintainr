@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { startOfAppToday } from "@/lib/dates";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -24,7 +25,9 @@ export async function GET(req: NextRequest) {
   const overdueSchedules = await prisma.maintenanceSchedule.count({
     where: {
       organizationId: orgId,
-      nextDue: { lt: now },
+      // Overdue = the due day has ended, not "it is now past midnight UTC of
+      // the due day" (which counted a job as overdue the evening before).
+      nextDue: { lt: startOfAppToday(now) },
       enabled: true,
     },
   });

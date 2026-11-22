@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { QuickGuide } from "@/components/ui/quick-guide";
+import { localDateTimeInput } from "@/lib/dates";
 
 const REASON_BADGES: Record<string, string> = {
   BREAKDOWN: "bg-red-100 text-red-800",
@@ -46,7 +47,7 @@ export default function DowntimePage() {
     category: "",
     notes: "",
     planned: false,
-    startedAt: new Date().toISOString().slice(0, 16),
+    startedAt: localDateTimeInput(),
   });
 
   const fetchEvents = useCallback(async () => {
@@ -93,7 +94,7 @@ export default function DowntimePage() {
         category: "",
         notes: "",
         planned: false,
-        startedAt: new Date().toISOString().slice(0, 16),
+        startedAt: localDateTimeInput(),
       });
       fetchEvents();
     }
@@ -150,7 +151,11 @@ export default function DowntimePage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Downtime Tracking</h1>
         <button
-          onClick={() => setShowCreate(true)}
+          onClick={() => {
+            // Stamp the start time when the form opens, not when the page loaded.
+            setForm((f) => ({ ...f, startedAt: localDateTimeInput() }));
+            setShowCreate(true);
+          }}
           className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
         >
           + Log Downtime
