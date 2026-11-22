@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { categoryInOrg } from "@/lib/ownership";
 import { z } from "zod";
+import { readBody } from "@/lib/read-body";
 
 const categoryCreateSchema = z.object({
   name: z.string().min(1).max(200),
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
   }
   const orgId = (session as any).organizationId as string;
 
-  const body = await req.json();
+  const body = await readBody(req);
   const parsed = categoryCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

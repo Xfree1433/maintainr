@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { maskConnector, restoreMaskedSecrets } from "@/lib/connector-secrets";
 import { z } from "zod";
+import { readBody } from "@/lib/read-body";
 
 const connectorUpdateSchema = z.object({
   name: z.string().min(1).max(200).optional(),
@@ -70,7 +71,7 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const body = await req.json();
+  const body = await readBody(req);
   const parsed = connectorUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

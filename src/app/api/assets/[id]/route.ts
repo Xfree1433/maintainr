@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { assetUpdateSchema } from "@/lib/validators";
 import { facilityInOrg, categoryInOrg } from "@/lib/ownership";
+import { readBody } from "@/lib/read-body";
 
 export async function GET(
   req: NextRequest,
@@ -62,7 +63,7 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const body = await req.json();
+  const body = await readBody(req);
   const parsed = assetUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

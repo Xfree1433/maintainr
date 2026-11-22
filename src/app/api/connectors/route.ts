@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { maskConnector } from "@/lib/connector-secrets";
 import { z } from "zod";
+import { readBody } from "@/lib/read-body";
 
 const connectorCreateSchema = z.object({
   name: z.string().min(1).max(200),
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await req.json();
+  const body = await readBody(req);
   const parsed = connectorCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

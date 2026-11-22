@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { partCreateSchema } from "@/lib/validators";
+import { readBody } from "@/lib/read-body";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
   }
   const orgId = (session as any).organizationId as string;
 
-  const body = await req.json();
+  const body = await readBody(req);
   const parsed = partCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

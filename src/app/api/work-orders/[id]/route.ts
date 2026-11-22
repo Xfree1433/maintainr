@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { workOrderUpdateSchema } from "@/lib/validators";
 import { assetInOrg, technicianInOrg, scheduleInOrg, alertInOrg } from "@/lib/ownership";
+import { readBody } from "@/lib/read-body";
 
 export async function GET(
   req: NextRequest,
@@ -50,7 +51,7 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const body = await req.json();
+  const body = await readBody(req);
   const parsed = workOrderUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

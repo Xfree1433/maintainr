@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { readBody } from "@/lib/read-body";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -47,7 +48,7 @@ export async function PATCH(req: NextRequest) {
   const orgId = (session as any).organizationId as string;
   const userId = session.user.id;
 
-  const body = await req.json();
+  const body = await readBody(req);
   const { id, all } = body as { id?: string; all?: boolean };
 
   if (all) {
