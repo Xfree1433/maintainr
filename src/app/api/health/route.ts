@@ -13,6 +13,13 @@ interface CountRow {
 async function loadMigrations(): Promise<{ system: string; count: number }> {
   // Prefer the formal _prisma_migrations table when it exists and has rows.
   try {
+    // Ask whether the table is there before counting it. Counting a table that
+    // does not exist makes Postgres log an ERROR on every health probe, which
+    // buried real errors under about 1,400 lines a day.
+    const present: { t: string | null }[] = await prisma.$queryRaw`
+      SELECT to_regclass('"_prisma_migrations"')::text AS t
+    `;
+    if (!present[0]?.t) throw new Error("no _prisma_migrations table");
     const countRow: CountRow[] = await prisma.$queryRaw`
       SELECT count(*)::int AS c FROM "_prisma_migrations" WHERE finished_at IS NOT NULL
     `;
